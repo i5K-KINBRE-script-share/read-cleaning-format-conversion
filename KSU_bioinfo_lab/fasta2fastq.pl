@@ -10,7 +10,7 @@ use Getopt::Long; # allows me to call arguments by name instead of order
 ### import my arguments ###
 GetOptions(
 'b|base:s' => \$base,
-'d|directory:s' => \$dir) or die ""Usage: fasta2fastq -b [base filename e.g. filename minus .fasta] -d [directory]!\n";
+'d|directory:s' => \$dir) or die "Usage: fasta2fastq -b [base filename e.g. filename minus .fasta] -d [directory]!\n";
 
 my $offset = 33; # I think this was 33 for sanger FASTQ, change this if required!
 my $count = 0;
