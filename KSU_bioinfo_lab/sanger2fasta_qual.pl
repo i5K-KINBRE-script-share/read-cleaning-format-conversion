@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+#### Usage: sanger2fasta_qual.pl -b [base filename e.g. filename minus qual, anc, or fasta] -d [directory]
 use strict;
 use warnings;
 use Getopt::Long; # allows me to call arguments by name instead of order
@@ -12,8 +13,8 @@ my $base="tribolium_castaneum.003"; # default base filename
 
 ### import my arguments ###
 GetOptions(
-'f|base:s' => \$base,
-'d|directory:s' => \$dir);
+'b|base:s' => \$base,
+'d|directory:s' => \$dir)or die "Usage: sanger2fasta_qual.pl -b [base filename e.g. filename minus qual, anc, or fasta] -d [directory]!\n";
 
 ### open files ###
 open(IN_ANC,"<${dir}anc.${base}") or die $!; 	# you need to request a warning because we are opening with "open" not BioPerl
