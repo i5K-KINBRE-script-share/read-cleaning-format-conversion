@@ -26,7 +26,7 @@ open(QUAL_R2,">${dir}${base}_R2.qual") ;
 
 while (<IN_ANC>)
 {
-    @row= split("\cI");
+    @row= split("\t");
     ($insert_size,$insert_sd,$template_id,$ti,$trace_end,$trace_name)=($row[29],$row[30],$row[53],$row[54],$row[56],$row[58]);
 #    ($insert_size,$insert_sd,$template_id,$ti,$trace_end,$trace_name)=($row[26],$row[27],$row[56],$row[57],$row[59],$row[61]);
 	$header_hash{$ti}=">template_id=$template_id insert_size=$insert_size insert_sd=$insert_sd $trace_end\n";
@@ -35,7 +35,7 @@ while (<IN_FASTA>)
 {
 	if (/^>/)
 	{
-        $_ =~ /\|ti\|(\S+)/;
+        /\|ti\|(\S+)/;
         my $header="$header_hash{$1}";
         if ($header =~ /(.*) F(\n)/)
 		{
@@ -61,7 +61,7 @@ while (<IN_QUAL>)
 {
 	if (/^>/)
 	{
-        $_ =~ /\|ti\|(\S+)/;
+        /\|ti\|(\S+)/;
         my $header="$header_hash{$1}";
         if ($header =~ /(.*) F(\n)/)
 		{
