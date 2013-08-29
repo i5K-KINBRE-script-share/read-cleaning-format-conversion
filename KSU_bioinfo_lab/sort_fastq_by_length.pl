@@ -2,7 +2,7 @@
 #use strict;
 use warnings;
 # USAGE: sort_fastq_by_length.pl -f [contig_FASTQ_filename]
-# LONG USAGE: agp2scaffold.pl --fasta [contig_FASTA_filename]
+# LONG USAGE: sort_fastq_by_length.pl --fastq [contig_FASTQ_filename]
 ### load my modules ###
 use Getopt::Long; # allows me to call arguments by name instead of order
 use File::Basename;
@@ -16,7 +16,7 @@ my ($path,$fastq);
 GetOptions
 (
 'f|fastq:s' => \$fastq,
-);
+) or die "USAGE: sort_fastq_by_length.pl -f [contig_FASTQ_filename]!";
 
 my($filename, $directories, $suffix) = fileparse($fastq);
 
