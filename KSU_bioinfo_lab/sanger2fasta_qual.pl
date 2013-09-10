@@ -111,7 +111,6 @@ foreach (@qualfiles) #loop through list of files
         unless ($count == 0)
         {
             chomp;
-            print $_;
             my ($qdef, @qualLines) = split /\n/;
             $qdef =~ /\|ti\|(\S+)/;
             my $temp_ti=$1;
