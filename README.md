@@ -3,7 +3,7 @@ fastq-tools
 
 KSU_bioinfo_lab
 ---------------
-sanger2fastq.pl - Script converts older paired sanger reads (with an ANC, FASTA, and QUAL file) to FASTQ format. The headers and files will be similar to Illumina mate pair output (i.e. RF orientation). You will need to customize line 14 to 64 to import your data because the sanger ANC files seem to have a variable order to the columns. The conversion from FASTA to FASTQ is a modification of a script posted to SeqAnwsers http://seqanswers.com/forums/showthread.php?t=2775 
+**sanger2fastq.pl** - Script converts older paired sanger reads (with an ANC, FASTA, and QUAL file) to FASTQ format. The headers and files will be similar to Illumina mate pair output (i.e. RF orientation). You will need to customize line 14 to 64 to import your data because the sanger ANC files seem to have a variable order to the columns. The conversion from FASTA to FASTQ is a modification of a script posted to SeqAnwsers http://seqanswers.com/forums/showthread.php?t=2775 
 Uses the '.anc' file to split reads into forward and reverse files and makes the header pairs identical except for a trailing /1 or /2
 
 **sanger2fastq_brokenpair_rm.pl** - Script output unbroken pairs and singletons, sequences with more than two template_ids in the anc file are removed
