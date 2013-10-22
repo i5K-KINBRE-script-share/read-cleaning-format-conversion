@@ -15,7 +15,6 @@ my $outfilename;
 ################# open files ##############
 for my $f (@ARGV)
 {
-	my $fasta = IO::File->new($f);
 	################# screen for length ##############
 	$/ = ">";
 	open OLD_FASTA,'<', $f or die "Couldn't open $f :$!"; 	# you need to request a warning because we are opening with "open" not BioPerl
