@@ -19,4 +19,8 @@ Uses the '.anc' file to split reads into forward and reverse files and makes the
 
 **sanger2fastq_brokenpair_rm.pl** - Script output unbroken pairs and singletons, sequences with more than two template_ids in the anc file are removed
 
+**make_contigs_from_fasta.pl** Script breaks scaffolds at Ns and outputs a new multi fasta file with one entry pre contig 
+
+```USAGE: perl make_contigs_from_fasta.pl [fasta]```
+  
 **stats.sh** - see prinseq.sh
