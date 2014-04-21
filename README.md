@@ -4,6 +4,16 @@ fastq-tools
 KSU_bioinfo_lab
 ---------------
 
+**WrapFasta.pl** - Wrapping sequence is recommended by NCBI for fasta format. Some programs will return errors if this is not done properly. Here are a couple examples of this type of error: "Each line of the fasta entry must be the same length except the last." or "Each line of the qual file must be less than 65,536 characters."
+ 
+If you are receiving a similar error from a program you are trying to run then WrapFasta.pl will create a reformatted fasta file from your improperly wrapped file.
+
+DEPENDENCIES: 
+
+WrapFasta.pl requires the following BioPerl libraries: Bio::SeqIO and Bio::Seq.
+
+    USAGE: WrapFasta.pl -f [FASTA filename]
+
 **fasta2fastq.pl** - Script converts FASTA and QUAL files to FASTQ format. It is a slight modification of a script posted to SeqAnwsers http://seqanswers.com/forums/showthread.php?t=2775 
 
     USAGE: fasta2fastq -b [base filename e.g. filename minus .fasta] -d [directory]
