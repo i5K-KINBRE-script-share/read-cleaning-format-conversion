@@ -2,6 +2,7 @@
 ###############################################################################
 #   
 #	USAGE: perl convert_headers.pl
+# Illumina header conversion (the code on line 27 is from  http://www.freelists.org/post/mira_talk/Metagenome-assembly,4)
 #
 #  Created by jennifer shelton
 #
