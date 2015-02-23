@@ -74,7 +74,7 @@ __END__
 
 =head1 NAME
 
-WrapFasta.pl - a package of scripts that ...
+WrapFasta.pl - a scripts that wraps lines of fasta file without wrapped sequences or with inconsistently wrapped sequences. NCBI recommends that FASTA sequences be wrapped and BioPerl requires this however not all tools create wrapped FASTA files. Your reformatted fasta file will start with the original filename and end with "_wrapped.fasta".
 
 =head1 USAGE
 
