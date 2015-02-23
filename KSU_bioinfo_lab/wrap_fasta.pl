@@ -4,7 +4,7 @@
 #	USAGE: perl wrap_fasta.pl
 #
 #  Created by jennifer shelton
-# Wraps fasta files to the NCBI recommended 80 bp per line https://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml
+#  DESCRIPTION: Wraps fasta files to the NCBI recommended 80 bp per line https://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml. Does not require BioPerl. 
 ##################################################################################
 use strict;
 use warnings;
