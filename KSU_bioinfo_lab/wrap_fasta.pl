@@ -17,7 +17,7 @@ use File::Basename; # enable maipulating of the full path
 
 my $fasta = $ARGV[0];
 open (FASTA, "<", $fasta) or die  "can't open $fasta ! \n";
-my (${filename}, ${directories}, ${suffix}) = fileparse($fasta,'\..*');
+my (${filename}, ${directories}, ${suffix}) = fileparse($fasta,qr/\.[^.]*/); # directories has trailing slash includes dot in suffix
 my $out_fasta = "${directories}${filename}_wrapped.fasta";
 open (OUTFASTA,">","$out_fasta") or die "can't open $out_fasta\n";
 while (<FASTA>)

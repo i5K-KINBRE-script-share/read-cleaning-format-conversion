@@ -47,7 +47,7 @@ pod2usage(-exitstatus => 0, -verbose => 2) if $man;
 ##############                        run                       ###############
 ###############################################################################
 open (FASTA, '<', $fasta) or die "can't open $fasta !\n";
-my (${filename}, ${directories}, ${suffix}) = fileparse($fasta,'\..*'); # break appart filenames
+my (${filename}, ${directories}, ${suffix}) = fileparse($fasta,qr/\.[^.]*/); # directories has trailing slash includes dot in suffix
 my $out = "${directories}${filename}_wrapped.fasta";
 my $seq_out = Bio::SeqIO->new('-file' => ">$out",'-format' => 'fasta');
 my $header;

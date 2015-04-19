@@ -22,7 +22,8 @@ use Bio::DB::Fasta;
 my $start = $ARGV[0];
 my $stop = $ARGV[1];
 my $fasta_in = $ARGV[2];
-my (${filename}, ${directories}, ${suffix}) = fileparse($fasta_in, '\..*');
+
+my (${filename}, ${directories}, ${suffix}) = fileparse($fasta,qr/\.[^.]*/); # directories has trailing slash includes dot in suffix
 my $fasta_out = "${directories}${filename}_interval.fa";
 my $count = 1;
 ###############################################################################
