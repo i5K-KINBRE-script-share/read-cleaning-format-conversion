@@ -4,6 +4,10 @@ fastq-tools
 KSU_bioinfo_lab
 ---------------
 
+Cite as: Jennifer Shelton et al.. (2015). Irys-scaffolding: Irys-scaffolding tools Version 1.0.0. Zenodo. 10.5281/zenodo.17584
+
+[![DOI](https://zenodo.org/badge/12929/i5K-KINBRE-script-share/read-cleaning-format-conversion.svg)](http://dx.doi.org/10.5281/zenodo.17585)
+
 **WrapFasta.pl** - Wrapping sequence is recommended by NCBI for fasta format. Some programs will return errors if this is not done properly. Here are a couple examples of this type of error: "Each line of the fasta entry must be the same length except the last." or "Each line of the qual file must be less than 65,536 characters."
  
 If you are receiving a similar error from a program you are trying to run then WrapFasta.pl will create a reformatted fasta file from your improperly wrapped file.
