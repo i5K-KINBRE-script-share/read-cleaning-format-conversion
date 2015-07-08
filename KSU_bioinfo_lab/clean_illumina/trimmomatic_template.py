@@ -15,7 +15,7 @@ import logging as log
 import os
 import re
 import general
-path_to_trimmomatic='/homes/bioinfo_software/Trimmomatic-0.33/trimmomatic-0.33.jar'
+path_to_trimmomatic='/homes/bioinfo/bioinfo_software/Trimmomatic-0.33/trimmomatic-0.33.jar'
 ##########################################################################
 ##############                  Custom functions              ############
 ##########################################################################

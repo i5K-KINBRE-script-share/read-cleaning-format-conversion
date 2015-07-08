@@ -175,17 +175,18 @@ def main():
     convert=' | awk \'{if (NR % 4 == 1) {split($1, arr, \":\"); printf \"%s_%s:%s:%s:%s:%s#0/%s\\n\", arr[1], arr[3], arr[4], arr[5], arr[6], arr[7], substr($2, 1, 1), $0} else if (NR % 4 == 3){print \"+\"} else {print $0} }\' > '
     # Convert headers
     if args.convert_header:
+        trim_script.write('#!/bin/bash\n')
         trim_script.write('# Convert headers:\n')
         index=0
         for fastq in forwards:
             (f_path,f_basename,f_ext)=general.parse_filename(forwards[index])
             new_forward_fastq = out_dir + '/' + f_basename + '_h.fastq'
-            trim_script.write(forwards[index] + convert + new_forward_fastq + '\n')
+            trim_script.write('cat ' + forwards[index] + convert + new_forward_fastq + '\n')
             forwards[index] = new_forward_fastq
             if not args.single:
                 (r_path,r_basename,r_ext)=general.parse_filename(reverses[index])
                 new_reverse_fastq = out_dir + '/' + r_basename + '_h.fastq'
-                trim_script.write(reverses[index] + convert + new_reverse_fastq + '\n')
+                trim_script.write('cat ' + reverses[index] + convert + new_reverse_fastq + '\n')
                 reverses[index] = new_reverse_fastq
             index += 1
     # Trim sequences
