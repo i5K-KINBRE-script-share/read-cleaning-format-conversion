@@ -14,7 +14,7 @@ optional arguments:
 -h, --help            show this help message and exit
 -v, --verbose         Runs reporting status updates
 -q, --quiet           Does not report status updates
--c, --colorized       Colorizes log reports. Use only if printing output
+-c, --colorized       Colorizes log reports (use if printing to screen)
 
 -r READ_LIST, --read_list  READ_LIST
 
@@ -62,7 +62,3 @@ The minimum read length in bp. (Default = 90).
 -o OUT, --out OUT     
 
 Output directory (Default=$HOME)
-
--d SEQUENCE, --dna SEQUENCE
-
-DNA sequence to summarize
