@@ -48,14 +48,24 @@ def parse_file(read_list_file, single):
             log.error('"%(e)s... Use the -s --single flag to indicate single end Illumina reads or make sure to separate you comma separated list of foward and reverse reads with a single tab in your plain text read_list file."' % locals())
             sys.exit(0)
     input.close()
-def trim_template(forward,reverse,adapter_fasta,baseout_fastq):
+def trim_template(forward,reverse,adapter_fasta,out_dir):
     '''
         Template for paired end scripts
     '''
-    # ADAPTERS = TruSeq3-PE.fa for first dataset, or TruSeq-3-PE-2.fa for second dataset, or TruSeq-3-SE.fa to force 'simple mode' only (Supplementary table 2)
+    # ADAPTERS = TruSeq3-PE.fa for first dataset, or TruSeq-3-PE-2.fa for
+    # second dataset, or TruSeq-3-SE.fa to force 'simple mode' only
+    # (Supplementary table 2)
     # SW = sliding window quality cutoff, values from 2-35 were tested
-    # S = stringency for maximum information mode, values from 0.1-0.9 (with 0.1 increments), 0.91-0.99 (with 0.01 increments) and 0.991 to 0999 (with 0.001 increments) were tested
-    code='java -jar ' + path_to_trimmomatic + ' PE -threads 16 -phred33 ' + forward + ' ' + reverse + ' -baseout ' + baseout_fastq + ' ILLUMINACLIP:' + adapter_fasta + ':2:30:12:1:true LEADING:3 MAXINFO:40:0.8 MINLEN:90\n'
+    # S = stringency for maximum information mode, values from 0.1-0.9
+    # (with 0.1 increments), 0.91-0.99 (with 0.01 increments) and 0.991 to 0999
+    # (with 0.001 increments) were tested
+    (f_path,f_basename,f_ext)=general.parse_filename(forward)
+    new_pair_forward_fastq = out_dir + '/' + f_basename + '_c_pair.fastq'
+    new_single_forward_fastq = out_dir + '/' + f_basename + '_c_single.fastq'
+    (r_path,r_basename,r_ext)=general.parse_filename(reverse)
+    new_pair_reverse_fastq = out_dir + '/' + r_basename + '_c_pair.fastq'
+    new_single_reverse_fastq = out_dir + '/' + r_basename + '_c_single.fastq'
+    code='java -jar ' + path_to_trimmomatic + ' PE -threads 16 -phred33 ' + forward + ' ' + reverse + ' ' + new_pair_forward_fastq + ' ' + new_single_forward_fastq + ' ' + new_pair_reverse_fastq + ' ' + new_single_reverse_fastq + ' ILLUMINACLIP:' + adapter_fasta + ':2:30:12:1:true LEADING:3 MAXINFO:40:0.8 MINLEN:90\n'
     return(code)
 def trim_template_single(forward):
     '''

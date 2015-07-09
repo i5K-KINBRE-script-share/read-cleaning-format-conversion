@@ -30,28 +30,6 @@ def color_errors_warnings(f_text):
     '''
     print(dev_colors.WARNING + dev_colors.BOLD + dev_colors.BACKGROUND +
           f_text + dev_colors.ENDC)
-def count_base(input_sequence):
-    '''
-        Count each base in a sequence of DNA and print the results.
-    '''
-    log.info('Counting bases...')
-    na_count = {}
-    for na in input_sequence:
-        if na not in na_count:
-            na_count[na] = 1
-        else:
-            na_count[na] += 1
-    print(na_count['A'], na_count['C'], na_count['G'], na_count['T'])
-    log.info('Done counting bases.')
-#def parse_file(f_input_file, f_output_file):
-#    '''
-#        Parse input file.
-#    '''
-#    full_path = os.path.expanduser(f_input_file)
-#    try:
-#        input = open(full_path, "r")
-#    except IOError as e:
-#        log.error('"%(e)s"' % locals())
 ##########################################################################
 ##############         Print informative message              ############
 ##########################################################################
@@ -145,7 +123,8 @@ def main():
     # Get list of read FASTQ files
     #######################################
     print(args.read_list, args.single, args.min_read_length)
-    (forwards,reverses) = trimmomatic_template.parse_file(args.read_list, args.single)
+    (forwards,reverses) = trimmomatic_template.parse_file(args.read_list,
+                                                          args.single)
     #######################################
     # Sanity check read FASTQ files
     #######################################
@@ -168,41 +147,51 @@ def main():
     out_dir= out_dir + '/' + args.project # final out directory is 'project_id'
     general.mk_out_sub_directory(out_dir)
     general.mk_out_sub_directory(out_dir + '/scripts')
+    general.mk_out_sub_directory(out_dir + '/qsubs')
     #######################################
     # Write trimmomatic script
     #######################################
-    trim_script = general.open_write_file(out_dir + '/scripts/run_trimmomatic_' + args.project + '.sh')
     convert=' | awk \'{if (NR % 4 == 1) {split($1, arr, \":\"); printf \"%s_%s:%s:%s:%s:%s#0/%s\\n\", arr[1], arr[3], arr[4], arr[5], arr[6], arr[7], substr($2, 1, 1), $0} else if (NR % 4 == 3){print \"+\"} else {print $0} }\' > '
-    # Convert headers
-    if args.convert_header:
-        trim_script.write('#!/bin/bash\n')
-        trim_script.write('# Convert headers:\n')
-        index=0
-        for fastq in forwards:
-            (f_path,f_basename,f_ext)=general.parse_filename(forwards[index])
-            new_forward_fastq = out_dir + '/' + f_basename + '_h.fastq'
-            trim_script.write('cat ' + forwards[index] + convert + new_forward_fastq + '\n')
-            forwards[index] = new_forward_fastq
-            if not args.single:
-                (r_path,r_basename,r_ext)=general.parse_filename(reverses[index])
-                new_reverse_fastq = out_dir + '/' + r_basename + '_h.fastq'
-                trim_script.write('cat ' + reverses[index] + convert + new_reverse_fastq + '\n')
-                reverses[index] = new_reverse_fastq
-            index += 1
-    # Trim sequences
-    trim_script.write('# Clean reads:\n')
+    qsub_script = general.open_write_file(out_dir + '/qsubs/qsub_trimmomatic.sh')
+    qsub_script.write('#!/bin/bash\n')
     index=0
     for fastq in forwards:
-        baseout_fastq = out_dir + '/' + 'cleaned_' + args.project + '_'
+        (f_path,f_basename,f_ext)=general.parse_filename(forwards[index])
+        qsub_script.write('qsub -l mem=4G,h_rt=6:00:00 -pe single 16 '+ out_dir
+                          + '/scripts/run_trimmomatic_' + f_basename + '.sh\n' )
         if not args.single:
-            trim_script.write(trimmomatic_template.trim_template(forwards[index],reverses[index],args.adapter,baseout_fastq))
+            (r_path,r_basename,r_ext)=general.parse_filename(reverses[index])
+        trim_script = general.open_write_file(out_dir
+                                              + '/scripts/run_trimmomatic_'
+                                              + f_basename + '.sh')
+        trim_script.write('#!/bin/bash\n')
+        # Convert headers
+        if args.convert_header:
+            trim_script.write('# Convert headers:\n')
+            new_forward_fastq = out_dir + '/' + f_basename + '_h.fastq'
+            trim_script.write('cat ' + forwards[index] + convert
+                              + new_forward_fastq + '\n')
+            forwards[index] = new_forward_fastq
+            if not args.single:
+                new_reverse_fastq = out_dir + '/' + r_basename + '_h.fastq'
+                trim_script.write('cat ' + reverses[index] + convert
+                                  + new_reverse_fastq + '\n')
+                reverses[index] = new_reverse_fastq
+        # Trim sequences
+        trim_script.write('# Clean reads:\n')
+        if not args.single:
+            trim_script.write(trimmomatic_template.trim_template(
+                                                                 forwards[index],
+                                                                 reverses[index],
+                                                                 args.adapter,
+                                                                 out_dir))
         else:
             trim_script.write(trimmomatic_template.trim_template_single(forwards[index]))
-        # Section in progress... (Remember to point to a SE adapter fasta file
-        # by default)
+            # Section in progress... (Remember to point to a SE adapter fasta file
+            # by default)
+        trim_script.close()
         index += 1
-    trim_script.close()
-    count_base(args.sequence)
+    qsub_script.close()
 #    log.info("This should be verbose.")
 #    log.warning("This is a warning.")
 #    log.error("This is an error.")
