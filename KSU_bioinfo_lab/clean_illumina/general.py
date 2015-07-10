@@ -69,7 +69,7 @@ def mk_out_sub_directory(path):
     '''
     try:
         os.mkdir(path)
-    except FileExistsError as e:
+    except OSError as e:
         log.warning('%(e)s' % locals())
         pass
     except:
