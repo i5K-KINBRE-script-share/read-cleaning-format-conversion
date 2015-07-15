@@ -9,6 +9,7 @@ import logging as log
 import os
 import trimmomatic_template
 import general
+import fasta_qc
 ##########################################################################
 ##############                  Custom classes                ############
 ##########################################################################
@@ -155,6 +156,7 @@ def main():
     qsub_script = general.open_write_file(out_dir + '/qsubs/qsub_trimmomatic.sh')
     qsub_script.write('#!/bin/bash\n')
     index=0
+    args.adapter = fasta_qc.main(args.adapter,['wrap', 'new_line','header_whitespace'])
     for fastq in forwards:
         (f_path,f_basename,f_ext)=general.parse_filename(forwards[index])
         qsub_script.write('qsub -l mem=4G,h_rt=6:00:00 -pe single 16 '+ out_dir

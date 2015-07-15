@@ -233,10 +233,12 @@ def main(file,steps):
             print('\tHeader whitespace: bad')
             headers_whitespace = fix_headers(file)
             print(headers_whitespace)
+            file = headers_whitespace
         print('Done with FASTA new line QC.')
     print('#######################################')
     print('# Done with FASTA QC.')
     print('#######################################')
+    return(file)
 
 ##########################################################################
 #####       Execute main unless script is simply imported     ############
