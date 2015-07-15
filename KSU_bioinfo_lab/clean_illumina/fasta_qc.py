@@ -7,6 +7,7 @@
 #   Created by Jennifer M Shelton
 ##########################################################################
 import re
+import logging as log
 import general
 import textwrap
 import os
@@ -42,8 +43,11 @@ def fix_new_line(file, header_whitespace=False):
         file and ends each line (including the last line) with a new 
         line character ('\\n').
     '''
+    suffix = '_ended.fasta'
+    if header_whitespace:
+        suffix = '_ended_h.fasta'
     (out_path,out_basename,out_ext)=general.parse_filename(file)
-    file_with_new_line = out_path + '/' +  out_basename + '_ended.fasta'
+    file_with_new_line = out_path + '/' +  out_basename + suffix
     broken_fasta=general.open_file(file)
     fixed_fasta=general.open_write_file(file_with_new_line)
     header_pattern = re.compile('^>.*')
@@ -51,9 +55,9 @@ def fix_new_line(file, header_whitespace=False):
     for line in broken_fasta:
         line=line.rstrip()
         if header_pattern.match(line):
-            if header_whitespace:
-                header = re.sub('\s+', '_', header)
-                line = header
+            header = line
+            header = re.sub('\s+', '_', header)
+            line = header
         fixed_fasta.write(line + '\n')
     fixed_fasta.close()
     broken_fasta.close()
@@ -87,8 +91,11 @@ def fix_wrap(file, header_whitespace=False):
         Wraps text in a FASTA file so that no line of sequence has more 
         than 60 bases. Wrapped file is saved with the suffix '_wrap.fasta'.
     '''
+    suffix = '_wrap.fasta'
+    if header_whitespace:
+        suffix = '_wrap_h.fasta'
     (out_path,out_basename,out_ext)=general.parse_filename(file)
-    file_with_wrapping = out_path + '/' + out_basename + '_wrap.fasta'
+    file_with_wrapping = out_path + '/' + out_basename + suffix
     fixed_fasta=general.open_write_file(file_with_wrapping)
     header_pattern = re.compile('^>.*')
     infile = general.open_file(file)
@@ -115,6 +122,47 @@ def fix_wrap(file, header_whitespace=False):
     infile.close()
     return(file_with_wrapping)
 #######################################
+# Find/replace white space in FASTA
+# headers
+#######################################
+def check_headers(file):
+    '''
+        Check if FASTA headers contain white spaces that break Trimmomatic and 
+        some other bioinfo tools. Return True if header has spaces. Returns 
+        False if header has no spaces.
+    '''
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(file)
+    for line in infile:
+        line = line.rstrip()
+        if header_pattern.match(line):
+            if re.match('.*\s.*', line):
+                return(False)
+    return(True)
+def fix_headers(file):
+    '''
+        Remove white spaces that break Trimmomatic and some other bioinfo tools 
+        from the headers of a FASTA file. Fixed FASTA file is saved with the 
+        suffix '_h.fasta'.
+    '''
+    (out_path,out_basename,out_ext)=general.parse_filename(file)
+    file_with_header = out_path + '/' +  out_basename + '_h.fasta'
+    broken_fasta=general.open_file(file)
+    fixed_fasta=general.open_write_file(file_with_header)
+    header_pattern = re.compile('^>.*')
+    header = ''
+    for line in broken_fasta:
+        line=line.rstrip()
+        if header_pattern.match(line):
+            header = line
+            header = re.sub('\s+', '_', header)
+            line = header
+        fixed_fasta.write(line + '\n')
+    fixed_fasta.close()
+    broken_fasta.close()
+    return(file_with_header)
+
+#######################################
 # Runs quality checking and filtering
 # based on a user-defined list of
 # quality checks
@@ -123,7 +171,7 @@ def main(file,steps):
     '''
         For a given FASTA file function runs all qc steps listed in the
         set of steps. 
-        USAGE: fasta_qc.main('/usr/me/test.fasta',['wrap', 'new_line'])
+        USAGE: fasta_qc.main('/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
     '''
     print('#######################################')
     print('# Running FASTA QC...')
@@ -132,13 +180,17 @@ def main(file,steps):
     print('1: ')
     print(qc_set)
     original_file = file
+    if 'header_whitespace' in qc_set:
+        header_whitespace = True
+    else:
+        header_whitespace = False
     if 'wrap' in qc_set:
         print('Running FASTA wrapping QC...')
         if check_wrap(file):
             print('\tWrap: good')
         else:
             print('\tWrap: bad')
-            file_with_wrapping = fix_wrap(file)
+            file_with_wrapping = fix_wrap(file, header_whitespace)
             if not file_with_wrapping == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
                     print()
@@ -153,6 +205,7 @@ def main(file,steps):
                 qc_set = qc_set.difference(remove_set)
                 print('2: ')
                 print(qc_set)
+                header_whitespace = False #if file was cleaned skip in future
         print('Done with FASTA wrapping QC.')
     if 'new_line' in qc_set:
         print('Running FASTA new line QC...')
@@ -165,13 +218,21 @@ def main(file,steps):
             print('\tNew_line: good')
         else:
             print('\tNew_line: bad')
-            new_file = fix_new_line(file)
+            new_file = fix_new_line(file, header_whitespace)
             if not new_file == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
                     print()
                     os.remove(file)
             file = new_file
+            header_whitespace = False #if file was cleaned skip in future
             print(file)
+    if header_whitespace:
+        if check_headers(file):
+            print('\tHeader whitespace: good')
+        else:
+            print('\tHeader whitespace: bad')
+            headers_whitespace = fix_headers(file)
+            print(headers_whitespace)
         print('Done with FASTA new line QC.')
     print('#######################################')
     print('# Done with FASTA QC.')
