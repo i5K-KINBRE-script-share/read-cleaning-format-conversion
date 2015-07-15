@@ -1,0 +1,185 @@
+#!/usr/bin/env python3
+##########################################################################
+#	USAGE: import fasta_qc
+#   DESCRIPTION: Functions for common FASTA file quality control tasks (e.g.
+#   checking that sequences are wrapped and/or making sure final newline
+#   character is present)
+#   Created by Jennifer M Shelton
+##########################################################################
+import re
+import general
+import textwrap
+import os
+file='/Users/jennifer_shelton/Desktop/Bai_test.fa'
+#file='/Users/jennifer_shelton/Desktop/Bai_test_ended.fasta'
+steps=['new_line','wrap']
+#######################################
+# Check for last new line
+#######################################
+def check_new_line(file):
+    '''
+        Returns True if the last line in a FASTA file ends in the 
+        standard new line character ('\\n'). Returns False if not.
+        Test also fails if the sequence lines in in the less common 
+        '\\r' character.
+    '''
+    infile = general.open_file(file)
+    last_char=''
+    for line in infile:
+        last_char = line[-1]
+    infile.close()
+    if last_char == '\n':
+        return(True)
+    else:
+        return(False)
+#######################################
+# Correct for missing or non-canonical
+# newlines
+#######################################
+def fix_new_line(file, header_whitespace=False):
+    '''
+        Strips any new line character ('\\n' or '\\r') from each line in
+        file and ends each line (including the last line) with a new 
+        line character ('\\n').
+    '''
+    (out_path,out_basename,out_ext)=general.parse_filename(file)
+    file_with_new_line = out_path + '/' +  out_basename + '_ended.fasta'
+    broken_fasta=general.open_file(file)
+    fixed_fasta=general.open_write_file(file_with_new_line)
+    header_pattern = re.compile('^>.*')
+    header = ''
+    for line in broken_fasta:
+        line=line.rstrip()
+        if header_pattern.match(line):
+            if header_whitespace:
+                header = re.sub('\s+', '_', header)
+                line = header
+        fixed_fasta.write(line + '\n')
+    fixed_fasta.close()
+    broken_fasta.close()
+    return(file_with_new_line)
+#######################################
+# Check that FASTA is wrapped
+#######################################
+def check_wrap(file):
+    '''
+        Returns True if the none of the sequence lines in a FASTA file 
+        exceed 80 characters (this should be true if the FASTA file is 
+        wrapped). Returns False if one or more line of sequence
+        exceeds 80 characters. Wrapped file is saved with the suffix 
+        '_wrap.fasta'.
+
+    '''
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(file)
+    for line in infile:
+        line = line.rstrip()
+        if not header_pattern.match(line):
+            if len(line) > 80:
+                return(False)
+    return(True)
+#######################################
+# Wrap an unwrapped or improperly
+# wrapped FASTA
+#######################################
+def fix_wrap(file, header_whitespace=False):
+    '''
+        Wraps text in a FASTA file so that no line of sequence has more 
+        than 60 bases. Wrapped file is saved with the suffix '_wrap.fasta'.
+    '''
+    (out_path,out_basename,out_ext)=general.parse_filename(file)
+    file_with_wrapping = out_path + '/' + out_basename + '_wrap.fasta'
+    fixed_fasta=general.open_write_file(file_with_wrapping)
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(file)
+    dna = ''
+    header = ''
+    for line in infile:
+        line = line.rstrip()
+        if header_pattern.match(line):
+            if not dna == '': # skip the first (empty record)
+                fixed_fasta.write(header + '\n')
+                wrap = textwrap.fill(dna,60) # Wrap sequence lines after
+                    # 60 bases
+                fixed_fasta.write(wrap + '\n')
+            header = line
+            if header_whitespace:
+                header = re.sub('\s+', '_', header) # Gets rid of
+                    # whitespace in the headers
+            new_dna = next(infile)
+            new_dna = new_dna.rstrip()
+            dna = new_dna
+        else:
+            dna = dna + line
+    fixed_fasta.close()
+    infile.close()
+    return(file_with_wrapping)
+#######################################
+# Runs quality checking and filtering
+# based on a user-defined list of
+# quality checks
+#######################################
+def main(file,steps):
+    '''
+        For a given FASTA file function runs all qc steps listed in the
+        set of steps. 
+        USAGE: fasta_qc.main('/usr/me/test.fasta',['wrap', 'new_line'])
+    '''
+    print('#######################################')
+    print('# Running FASTA QC...')
+    print('#######################################')
+    qc_set=set(steps)
+    print('1: ')
+    print(qc_set)
+    original_file = file
+    if 'wrap' in qc_set:
+        print('Running FASTA wrapping QC...')
+        if check_wrap(file):
+            print('\tWrap: good')
+        else:
+            print('\tWrap: bad')
+            file_with_wrapping = fix_wrap(file)
+            if not file_with_wrapping == file:
+                if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
+                    print()
+                    os.remove(file)
+            file = file_with_wrapping
+            if 'new_line' in qc_set: # If file was wrapped you can skip new
+                # line checks
+                print('\tSkipping check for proper new line characters ')
+                print('\tbecause when file was wrapped line endings were ')
+                print('\tset correctly.')
+                remove_set = set(['new_line'])
+                qc_set = qc_set.difference(remove_set)
+                print('2: ')
+                print(qc_set)
+        print('Done with FASTA wrapping QC.')
+    if 'new_line' in qc_set:
+        print('Running FASTA new line QC...')
+        # If the FASTA file has been wrapped then the new line
+        # characters have already been corrected so skip new_line
+        # correction.
+        print('3: ')
+        print(qc_set)
+        if check_new_line(file):
+            print('\tNew_line: good')
+        else:
+            print('\tNew_line: bad')
+            new_file = fix_new_line(file)
+            if not new_file == file:
+                if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
+                    print()
+                    os.remove(file)
+            file = new_file
+            print(file)
+        print('Done with FASTA new line QC.')
+    print('#######################################')
+    print('# Done with FASTA QC.')
+    print('#######################################')
+
+##########################################################################
+#####       Execute main unless script is simply imported     ############
+#####                for individual functions                 ############
+##########################################################################
+if __name__ == '__main__':
+    main(file,steps)
