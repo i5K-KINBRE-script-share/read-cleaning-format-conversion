@@ -11,6 +11,43 @@ import logging as log
 import general
 import textwrap
 import os
+import argparse
+##########################################################################
+##############                  Custom classes                ############
+##########################################################################
+
+class dev_colors:
+    '''
+        Fonts to indicate when script is under development
+        '''
+    WARNING = '\033[0;95m'
+    BACKGROUND = '\033[10;44m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+##########################################################################
+##############                  Custom functions              ############
+##########################################################################
+def color_errors_warnings(f_text):
+    '''
+        Print magenta notice when script is under development
+    '''
+    print(dev_colors.WARNING + dev_colors.BOLD + dev_colors.BACKGROUND +
+          f_text + dev_colors.ENDC)
+##########################################################################
+##############         Print informative message              ############
+##########################################################################
+def doc():
+    '''
+        Print standard information about script.
+    '''
+    print('###########################################################')
+    print('#  fasta_qc.py Version 1.0.0                              #')
+    print('#                                                         #')
+    print('#  Created by Jennifer M Shelton 7/16/15                  #')
+    print('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
+    print('#  python3 clean_illumina.py --help # for usage/options   #')
+    print('###########################################################')
+color_errors_warnings('       Warning: Script currently under development!!       ')
 #######################################
 # Check for last new line
 #######################################
@@ -160,16 +197,58 @@ def fix_headers(file):
     return(file_with_header)
 
 #######################################
-# Runs quality checking and filtering
-# based on a user-defined list of
-# quality checks
+# Main function runs quality checking
+# and filtering based on a
+# user-defined list of quality checks
 #######################################
-def main(file,steps):
+def main():
     '''
         For a given FASTA file function runs all qc steps listed in the
-        set of steps. 
-        USAGE: fasta_qc.main('/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
+        list of steps.
+        USAGE: python fasta_qc.py [-h] [-v] [-q] [-c] -f FILE -s STEPS
     '''
+    ######################################################################
+    ############        Get commandline arguments             ############
+    ######################################################################
+    parser = argparse.ArgumentParser(
+    description='DESCRIPTION: Script runs quality checking and filtering \
+                                     based on a user-defined list of quality \
+                                     checks. Command-line options that may be \
+                                     omitted (i.e. are NOT required) are shown \
+                                     in square brackets.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                     dest='verbose', help='Runs reporting status updates',
+                     default=True)
+    parser.add_argument('-q', '--quiet', action='store_false',
+                     dest='verbose', help='Does not report status updates')
+    parser.add_argument('-c', '--colorized',
+                     help='Colorizes log reports. Use only if printing \
+                     output to screen.',action='store_true',dest='colorized')
+    parser.add_argument('-f', '--fasta', dest='file',
+                     help='This is the the full path (path and filename) of \
+                     the user provided FASTA file.', required=True)
+    parser.add_argument('-s', '--qc_steps', dest='steps',
+                     help='List of QC steps to  perform on FASTA file \
+                     (default=[\'wrap\', \'new_line\',\'header_whitespace\']).',
+                        default=['wrap', 'new_line','header_whitespace'],
+                        required=True)
+    args = parser.parse_args()
+    if args.colorized:
+        import Colorer
+    if args.verbose:
+        doc()
+        log.basicConfig(format='%(levelname)s:  %(message)s', level=log.DEBUG)
+        log.info('Output is verbose. Run with -q, --quiet flag to suppress full output.')
+    else:
+        log.basicConfig(format='%(levelname)s: %(message)s')
+    run_steps(file,steps)
+
+def run_steps(file,steps):
+    '''
+        For a given FASTA file function runs all qc steps listed in the
+        list of steps.
+        USAGE: fasta_qc.run_steps'/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
+        '''
     log.info('#######################################')
     log.info('# Running FASTA QC...')
     log.info('#######################################')
@@ -184,7 +263,10 @@ def main(file,steps):
         if check_wrap(file):
             log.info('\tWrap: good')
         else:
-            log.info('\tWrap: bad')
+            log.warning('\tWrap: bad. Correcting sequence wrap now...')
+            if header_whitespace:
+                log.info('\tAny white space in headers will be replaced with')
+                log.info('\t\'-\' while correcting sequence wrap now...')
             file_with_wrapping = fix_wrap(file, header_whitespace)
             if not file_with_wrapping == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
@@ -208,7 +290,10 @@ def main(file,steps):
         if check_new_line(file):
             log.info('\tNew_line: good')
         else:
-            log.info('\tNew_line: bad')
+            log.warning('\tNew_line: bad. Correcting FASTA now...')
+            if header_whitespace:
+                log.info('''\tAny white space in headers will be replaced 
+                    with \'-\' while correcting new lines now...''')
             new_file = fix_new_line(file, header_whitespace)
             if not new_file == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
@@ -220,7 +305,7 @@ def main(file,steps):
         if check_headers(file):
             log.info('\tHeader whitespace: good')
         else:
-            log.info('\tHeader whitespace: bad')
+            log.warning('\tHeader whitespace: bad. Correcting FASTA now...')
             headers_whitespace = fix_headers(file)
             log.info(headers_whitespace)
             file = headers_whitespace
@@ -235,4 +320,4 @@ def main(file,steps):
 #####                for individual functions                 ############
 ##########################################################################
 if __name__ == '__main__':
-    main(file,steps)
+    main()
