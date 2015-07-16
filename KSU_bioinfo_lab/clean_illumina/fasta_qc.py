@@ -11,9 +11,6 @@ import logging as log
 import general
 import textwrap
 import os
-file='/Users/jennifer_shelton/Desktop/Bai_test.fa'
-#file='/Users/jennifer_shelton/Desktop/Bai_test_ended.fasta'
-steps=['new_line','wrap']
 #######################################
 # Check for last new line
 #######################################
@@ -21,15 +18,15 @@ def check_new_line(file):
     '''
         Returns True if the last line in a FASTA file ends in the 
         standard new line character ('\\n'). Returns False if not.
-        Test also fails if the sequence lines in in the less common 
+        Test also fails if the sequence lines ends in the less common
         '\\r' character.
     '''
     infile = general.open_file(file)
     last_char=''
     for line in infile:
-        last_char = line[-1]
+        last_char = line[-1] # grab the last character
     infile.close()
-    if last_char == '\n':
+    if last_char == '\n': # test the final last character
         return(True)
     else:
         return(False)
@@ -173,71 +170,64 @@ def main(file,steps):
         set of steps. 
         USAGE: fasta_qc.main('/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
     '''
-    print('#######################################')
-    print('# Running FASTA QC...')
-    print('#######################################')
-    qc_set=set(steps)
-    print('1: ')
-    print(qc_set)
+    log.info('#######################################')
+    log.info('# Running FASTA QC...')
+    log.info('#######################################')
     original_file = file
+    qc_set=set(steps)
     if 'header_whitespace' in qc_set:
         header_whitespace = True
     else:
         header_whitespace = False
     if 'wrap' in qc_set:
-        print('Running FASTA wrapping QC...')
+        log.info('Running FASTA wrapping QC...')
         if check_wrap(file):
-            print('\tWrap: good')
+            log.info('\tWrap: good')
         else:
-            print('\tWrap: bad')
+            log.info('\tWrap: bad')
             file_with_wrapping = fix_wrap(file, header_whitespace)
             if not file_with_wrapping == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
-                    print()
                     os.remove(file)
             file = file_with_wrapping
             if 'new_line' in qc_set: # If file was wrapped you can skip new
                 # line checks
-                print('\tSkipping check for proper new line characters ')
-                print('\tbecause when file was wrapped line endings were ')
-                print('\tset correctly.')
+                log.info('\tSkipping check for proper new line characters ')
+                log.info('\tbecause when file was wrapped line endings were ')
+                log.info('\tset correctly.')
                 remove_set = set(['new_line'])
-                qc_set = qc_set.difference(remove_set)
-                print('2: ')
-                print(qc_set)
-                header_whitespace = False #if file was cleaned skip in future
-        print('Done with FASTA wrapping QC.')
+                qc_set = qc_set.difference(remove_set) # skip newline fix in
+                # furture
+                header_whitespace = False #if headers were fixed skip in future
+        log.info('Done with FASTA wrapping QC.')
     if 'new_line' in qc_set:
-        print('Running FASTA new line QC...')
+        log.info('Running FASTA new line QC...')
         # If the FASTA file has been wrapped then the new line
         # characters have already been corrected so skip new_line
         # correction.
-        print('3: ')
-        print(qc_set)
         if check_new_line(file):
-            print('\tNew_line: good')
+            log.info('\tNew_line: good')
         else:
-            print('\tNew_line: bad')
+            log.info('\tNew_line: bad')
             new_file = fix_new_line(file, header_whitespace)
             if not new_file == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
-                    print()
                     os.remove(file)
             file = new_file
-            header_whitespace = False #if file was cleaned skip in future
-            print(file)
+            header_whitespace = False # if headers were fixed skip in future
+            log.info(file)
     if header_whitespace:
         if check_headers(file):
-            print('\tHeader whitespace: good')
+            log.info('\tHeader whitespace: good')
         else:
-            print('\tHeader whitespace: bad')
+            log.info('\tHeader whitespace: bad')
             headers_whitespace = fix_headers(file)
-            print(headers_whitespace)
+            log.info(headers_whitespace)
             file = headers_whitespace
-        print('Done with FASTA new line QC.')
-    print('#######################################')
-    print('# Done with FASTA QC.')
-    print('#######################################')
+    log.info('Done with FASTA new line QC.')
+    log.info('#######################################')
+    log.info('# Done with FASTA QC.')
+    log.info('#######################################')
     return(file)
 
 ##########################################################################
