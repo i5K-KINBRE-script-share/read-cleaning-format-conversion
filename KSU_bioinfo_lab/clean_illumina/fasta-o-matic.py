@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 ##########################################################################
-#	USAGE: import fasta_qc
+#	USAGE: import fasta-o-matic
 #   DESCRIPTION: Functions for common FASTA file quality control tasks (e.g.
 #   checking that sequences are wrapped and/or making sure final newline
 #   character is present)
@@ -41,7 +41,7 @@ def doc():
         Print standard information about script.
     '''
     print('###########################################################')
-    print('#  fasta_qc.py Version 1.0.0                              #')
+    print('#  fasta-o-matic.py Version 1.0.0                         #')
     print('#                                                         #')
     print('#  Created by Jennifer M Shelton 7/16/15                  #')
     print('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
@@ -205,7 +205,7 @@ def main():
     '''
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
-        USAGE: python fasta_qc.py [-h] [-v] [-q] [-c] -f FILE -s STEPS
+        USAGE: python fasta-o-matic.py [-h] [-v] [-q] [-c] -f FILE -s STEPS
     '''
     ######################################################################
     ############        Get commandline arguments             ############
@@ -247,7 +247,7 @@ def run_steps(file,steps):
     '''
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
-        USAGE: fasta_qc.run_steps'/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
+        USAGE: fasta-o-matic.run_steps'/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
         '''
     log.info('#######################################')
     log.info('# Running FASTA QC...')
