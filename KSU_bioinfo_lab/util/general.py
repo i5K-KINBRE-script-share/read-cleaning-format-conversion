@@ -13,7 +13,8 @@ def convert_to_full(path):
         Returns full path from a partial path
     '''
     full_path = os.path.expanduser(path) # only works on '~'
-    full_path2 = os.path.abspath(full_path) # works on path relative to the current working directory
+    full_path2 = os.path.abspath(full_path) # works on path relative to the
+    # current working directory
     return(full_path2)
 def open_file(file):
     '''

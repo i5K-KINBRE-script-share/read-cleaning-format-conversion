@@ -160,7 +160,7 @@ def fix_wrap(file, header_whitespace=False):
     infile.close()
     return(file_with_wrapping)
 #######################################
-# Find/replace white space in FASTA
+# Check for white space in FASTA
 # headers
 #######################################
 def check_headers(file):
@@ -177,6 +177,10 @@ def check_headers(file):
             if re.match('.*\s.*', line):
                 return(False)
     return(True)
+#######################################
+# Replace white space in FASTA
+# headers
+#######################################
 def fix_headers(file):
     '''
         Remove white spaces that break Trimmomatic and some other bioinfo tools 
@@ -199,12 +203,31 @@ def fix_headers(file):
     fixed_fasta.close()
     broken_fasta.close()
     return(file_with_header)
+#######################################
+# Check for that the file starts with
+# at least a '>'
+#######################################
+def check_header_pattern(file):
+    '''
+        Check if FASTA file begins with a '>'. Returns True if the first line
+        is begins with a '>'. Returns False if the file starts with any other 
+        character.
+    '''
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(file)
+    first_line = infile.readline()
+    infile.close()
+    if header_pattern.match(first_line):
+        return(True)
+    else:
+        return(False)
 
 #######################################
 # Main function runs quality checking
 # and filtering based on a
 # user-defined list of quality checks
 #######################################
+
 def main():
     '''
         For a given FASTA file function runs all qc steps listed in the
@@ -215,7 +238,7 @@ def main():
     ############        Get commandline arguments             ############
     ######################################################################
     parser = argparse.ArgumentParser(
-    description='DESCRIPTION: Script runs quality checking and filtering \
+                                     description='DESCRIPTION: Script runs quality checking and filtering \
                                      based on a user-defined list of quality \
                                      checks. Command-line options that may be \
                                      omitted (i.e. are NOT required) are shown \
@@ -231,11 +254,11 @@ def main():
     parser.add_argument('-f', '--fasta', dest='file',
                      help='This is the the full path (path and filename) of \
                      the user provided FASTA file.', required=True)
-    parser.add_argument('-s', '--qc_steps', dest='steps',
+    parser.add_argument('-s', '--qc_steps', nargs='+', dest='steps',
                      help='List of QC steps to  perform on FASTA file \
-                     (default=[\'wrap\', \'new_line\',\'header_whitespace\']).',
-                        default=['wrap', 'new_line','header_whitespace'],
-                        required=True)
+                     (default=[\'wrap\',\'new_line\',\'header_whitespace\']).',
+                     default=['wrap','new_line','header_whitespace'],
+                     required=False)
     args = parser.parse_args()
     if args.colorized:
         import Colorer
@@ -245,23 +268,36 @@ def main():
         log.info('Output is verbose. Run with -q, --quiet flag to suppress full output.')
     else:
         log.basicConfig(format='%(levelname)s: %(message)s')
-    run_steps(file,steps)
+
+    run_steps(args.file,args.steps)
 
 def run_steps(file,steps):
     '''
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
-        USAGE: fasta_o_matic.run_steps'/usr/me/test.fasta',['wrap', 'new_line','header_whitespace'])
-        '''
+        USAGE: fasta_o_matic.run_steps'/usr/me/test.fasta',
+        ['wrap', 'new_line','header_whitespace'])
+    '''
     log.info('#######################################')
-    log.info('# Running FASTA QC...')
+    log.info('# Running Fasta_O_Matic...')
     log.info('#######################################')
     original_file = file
+    # First check for fatal errors:
+    log.info('Checking for fatal errors...')
+    if check_header_pattern(file):
+        log.info('\tFirst header: good')
+    else:
+        log.error('\tFile may not be in FASTA format because it does not begin with > for file %(file)s' % locals()) # Print Input/output error
+        sys.exit(0) # Kill program
     qc_set=set(steps)
     if 'header_whitespace' in qc_set:
         header_whitespace = True
     else:
         header_whitespace = False
+    log.info('Done checking for fatal errors.')
+    # Next check for non-fatal errors:
+    log.info('Checking for non-fatal errors...')
+    print(qc_set)
     if 'wrap' in qc_set:
         log.info('Running FASTA wrapping QC...')
         if check_wrap(file):
@@ -314,8 +350,9 @@ def run_steps(file,steps):
             log.info(headers_whitespace)
             file = headers_whitespace
     log.info('Done with FASTA new line QC.')
+    log.info('Done checking for non-fatal errors.')
     log.info('#######################################')
-    log.info('# Done with FASTA QC.')
+    log.info('# Done with Fasta_O_Matic.')
     log.info('#######################################')
     return(file)
 
