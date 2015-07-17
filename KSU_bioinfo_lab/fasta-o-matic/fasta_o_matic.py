@@ -256,7 +256,7 @@ def main():
                      the user provided FASTA file.', required=True)
     parser.add_argument('-s', '--qc_steps', nargs='+', dest='steps',
                      help='List of QC steps to  perform on FASTA file \
-                     (default=[\'wrap\',\'new_line\',\'header_whitespace\']).',
+                     (default= -s wrap new_line header_whitespace).',
                      default=['wrap','new_line','header_whitespace'],
                      required=False)
     args = parser.parse_args()
