@@ -6,11 +6,15 @@
 #   character is present)
 #   Created by Jennifer M Shelton
 ##########################################################################
+import os
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+util_dir = os.path.abspath(parent_dir + '/../util')
+sys.path.append(util_dir)
 import re
 import logging as log
 import general
 import textwrap
-import os
 import argparse
 ##########################################################################
 ##############                  Custom classes                ############

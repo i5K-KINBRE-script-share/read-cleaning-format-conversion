@@ -4,12 +4,18 @@
 #   DESCRIPTION: Summarize counts of all four DNA bases.
 #   Created by Jennifer M Shelton
 ##########################################################################
+import os
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+util_dir = os.path.abspath(parent_dir + '/../util')
+fasta_o_matic_dir = os.path.abspath(parent_dir + '/../fasta-o-matic')
+sys.path.append(util_dir)
+sys.path.append(fasta_o_matic_dir)
 import argparse
 import logging as log
-import os
 import trimmomatic_template
 import general
-import fasta-o-matic
+import fasta_o_matic
 ##########################################################################
 ##############                  Custom classes                ############
 ##########################################################################
