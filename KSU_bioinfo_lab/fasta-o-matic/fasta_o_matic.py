@@ -75,7 +75,7 @@ def check_new_line(file):
 # Correct for missing or non-canonical
 # newlines
 #######################################
-def fix_new_line(file, header_whitespace=False):
+def fix_new_line(file, header_whitespace=False, out_dir=None):
     '''
         Strips any new line character ('\\n' or '\\r') from each line in
         file and ends each line (including the last line) with a new 
@@ -83,8 +83,10 @@ def fix_new_line(file, header_whitespace=False):
     '''
     suffix = '_ended.fasta'
     if header_whitespace:
-        suffix = '_ended_h.fasta'
+        suffix = '_ended_h.fasta' # make suffix match QC steps taken
     (out_path,out_basename,out_ext)=general.parse_filename(file)
+    if out_dir is not None:
+        out_path = out_dir # switch to user specified output directory
     file_with_new_line = out_path + '/' +  out_basename + suffix
     broken_fasta=general.open_file(file)
     fixed_fasta=general.open_write_file(file_with_new_line)
@@ -124,7 +126,7 @@ def check_wrap(file):
 # Wrap an unwrapped or improperly
 # wrapped FASTA
 #######################################
-def fix_wrap(file, header_whitespace=False):
+def fix_wrap(file, header_whitespace=False, out_dir=None):
     '''
         Wraps text in a FASTA file so that no line of sequence has more 
         than 60 bases. Wrapped file is saved with the suffix '_wrap.fasta'.
@@ -133,6 +135,8 @@ def fix_wrap(file, header_whitespace=False):
     if header_whitespace:
         suffix = '_wrap_h.fasta'
     (out_path,out_basename,out_ext)=general.parse_filename(file)
+    if out_dir is not None:
+        out_path = out_dir # switch to user specified output directory
     file_with_wrapping = out_path + '/' + out_basename + suffix
     fixed_fasta=general.open_write_file(file_with_wrapping)
     header_pattern = re.compile('^>.*')
@@ -181,13 +185,15 @@ def check_headers(file):
 # Replace white space in FASTA
 # headers
 #######################################
-def fix_headers(file):
+def fix_headers(file, out_dir=None):
     '''
         Remove white spaces that break Trimmomatic and some other bioinfo tools 
         from the headers of a FASTA file. Fixed FASTA file is saved with the 
         suffix '_h.fasta'.
     '''
     (out_path,out_basename,out_ext)=general.parse_filename(file)
+    if out_dir is not None:
+        out_path = out_dir # switch to user specified output directory
     file_with_header = out_path + '/' +  out_basename + '_h.fasta'
     broken_fasta=general.open_file(file)
     fixed_fasta=general.open_write_file(file_with_header)
@@ -259,6 +265,8 @@ def main():
                      (default= -s wrap new_line header_whitespace).',
                      default=['wrap','new_line','header_whitespace'],
                      required=False)
+    parser.add_argument('-o', '--out_dir', dest='out_dir',
+                        help='Output directory for any repaired FASTA created (no trailing slash).', default=None,required=False)
     args = parser.parse_args()
     if args.colorized:
         import Colorer
@@ -269,9 +277,9 @@ def main():
     else:
         log.basicConfig(format='%(levelname)s: %(message)s')
 
-    run_steps(args.file,args.steps)
+    run_steps(args.file, args.steps, args.out_dir)
 
-def run_steps(file,steps):
+def run_steps(file, steps, out_dir):
     '''
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
@@ -307,7 +315,7 @@ def run_steps(file,steps):
             if header_whitespace:
                 log.info('\tAny white space in headers will be replaced with')
                 log.info('\t\'-\' while correcting sequence wrap now...')
-            file_with_wrapping = fix_wrap(file, header_whitespace)
+            file_with_wrapping = fix_wrap(file, header_whitespace, out_dir)
             if not file_with_wrapping == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
                     os.remove(file)
@@ -334,7 +342,7 @@ def run_steps(file,steps):
             if header_whitespace:
                 log.info('''\tAny white space in headers will be replaced 
                     with \'-\' while correcting new lines now...''')
-            new_file = fix_new_line(file, header_whitespace)
+            new_file = fix_new_line(file, header_whitespace, out_dir)
             if not new_file == file:
                 if not file == original_file: # NEVER DELETE THE ORIGINAL FILE
                     os.remove(file)
@@ -346,7 +354,7 @@ def run_steps(file,steps):
             log.info('\tHeader whitespace: good')
         else:
             log.warning('\tHeader whitespace: bad. Correcting FASTA now...')
-            headers_whitespace = fix_headers(file)
+            headers_whitespace = fix_headers(file, out_dir)
             log.info(headers_whitespace)
             file = headers_whitespace
     log.info('Done with FASTA new line QC.')
