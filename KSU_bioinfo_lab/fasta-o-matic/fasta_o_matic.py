@@ -51,7 +51,9 @@ def doc():
     print('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
     print('#  python3 clean_illumina.py --help # for usage/options   #')
     print('###########################################################')
-color_errors_warnings('       Warning: Script currently under development!!       ')
+#color_errors_warnings('       Warning: Script currently under development!!       ')
+# uncomment line above for development versions
+print('hello')
 #######################################
 # Check for last new line
 #######################################
@@ -126,7 +128,6 @@ def check_wrap(file):
                 if wrap_length is None:
                     wrap_length = lengths[0] # initialize wrapping length
                 lengths.pop() # Remove the last sequence line
-#                print(lengths)
                 for seq_line in lengths:
                     if seq_line != wrap_length:
                         return(False) #Exit when you hit mismatched wrapped lines
@@ -137,6 +138,14 @@ def check_wrap(file):
                 return(False)
             seq_length = len(line)
             lengths.append(seq_length)
+    else: # For end of file
+        if len(lengths) > 2: # If multiple lines remain to compare
+            if wrap_length is None:
+                wrap_length = lengths[0] # initialize wrapping length
+                lengths.pop() # Remove the last sequence line
+                for seq_line in lengths:
+                    if seq_line != wrap_length:
+                        return(False) #Exit when you hit mismatched wrapped lines
     return(True)
 #######################################
 # Wrap an unwrapped or improperly
@@ -176,6 +185,11 @@ def fix_wrap(file, header_whitespace=False, out_dir=None):
             dna = new_dna
         else:
             dna = dna + line
+    else: # For end of file
+        fixed_fasta.write(header + '\n')
+        wrap = textwrap.fill(dna,60) # Wrap sequence lines after
+        # 60 bases
+        fixed_fasta.write(wrap + '\n')
     fixed_fasta.close()
     infile.close()
     return(file_with_wrapping)
