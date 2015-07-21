@@ -53,7 +53,6 @@ def doc():
     print('###########################################################')
 #color_errors_warnings('       Warning: Script currently under development!!       ')
 # uncomment line above for development versions
-print('hello')
 #######################################
 # Check for last new line
 #######################################
