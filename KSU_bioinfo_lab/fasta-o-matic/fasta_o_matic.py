@@ -116,11 +116,27 @@ def check_wrap(file):
     '''
     header_pattern = re.compile('^>.*')
     infile = general.open_file(file)
+    lengths = []
+    wrap_length = None
     for line in infile:
         line = line.rstrip()
+        # Check if all but last line are equal length
+        if header_pattern.match(line):
+            if len(lengths) > 2: # If multiple lines remain to compare
+                if wrap_length is None:
+                    wrap_length = lengths[0] # initialize wrapping length
+                lengths.pop() # Remove the last sequence line
+#                print(lengths)
+                for seq_line in lengths:
+                    if seq_line != wrap_length:
+                        return(False) #Exit when you hit mismatched wrapped lines
+            lengths = []
+        # Check if all sequence lines are < 80
         if not header_pattern.match(line):
-            if len(line) > 80:
+            if len(line) > 80: # exit when you hit a sequence line > 80
                 return(False)
+            seq_length = len(line)
+            lengths.append(seq_length)
     return(True)
 #######################################
 # Wrap an unwrapped or improperly
@@ -335,10 +351,13 @@ def run_steps(file, steps, out_dir):
         # If the FASTA file has been wrapped then the new line
         # characters have already been corrected so skip new_line
         # correction.
-        if check_new_line(file):
+        new_line_passed = check_new_line(file)
+        if sys.version_info > (3, 0):
+            log.warning('Python3 will read all newlines as \\n we will replace newlines to be safe.')
+        elif new_line_passed:
             log.info('\tNew_line: good')
-        else:
-            log.warning('\tNew_line: bad. Correcting FASTA now...')
+        if sys.version_info > (3, 0) or not new_line_passed:
+            log.warning('\tNew_line: may be bad. Correcting FASTA now...')
             if header_whitespace:
                 log.info('''\tAny white space in headers will be replaced 
                     with \'-\' while correcting new lines now...''')
