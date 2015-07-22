@@ -118,34 +118,45 @@ def check_wrap(file):
     header_pattern = re.compile('^>.*')
     infile = general.open_file(file)
     lengths = []
-    wrap_length = None
+    lengths_OK = False
+
     for line in infile:
         line = line.rstrip()
         # Check if all but last line are equal length
         if header_pattern.match(line):
             if len(lengths) > 2: # If multiple lines remain to compare
-                if wrap_length is None:
-                    wrap_length = lengths[0] # initialize wrapping length
-                lengths.pop() # Remove the last sequence line
-                for seq_line in lengths:
-                    if seq_line != wrap_length:
-                        return(False) #Exit when you hit mismatched wrapped lines
+                lengths_OK = compare_lengths(lengths)
+                if not lengths_OK:
+                    return False
             lengths = []
-        # Check if all sequence lines are < 80
-        if not header_pattern.match(line):
+        # Append to list and check if all sequence lines are < 80
+        else:
             if len(line) > 80: # exit when you hit a sequence line > 80
-                return(False)
+                return False
             seq_length = len(line)
             lengths.append(seq_length)
-    else: # For end of file
-        if len(lengths) > 2: # If multiple lines remain to compare
-            if wrap_length is None:
-                wrap_length = lengths[0] # initialize wrapping length
-                lengths.pop() # Remove the last sequence line
-                for seq_line in lengths:
-                    if seq_line != wrap_length:
-                        return(False) #Exit when you hit mismatched wrapped lines
-    return(True)
+
+    # One last set to evaluate after you fall off the end of the loop
+    if len(lengths) > 2:
+        lengths_OK = compare_lengths(lengths)
+    
+    return lengths_OK
+
+def compare_lengths(lengths):
+    '''
+    Compare lene length of >= 2 lines
+    '''
+
+    assert len(lengths) > 2, "I need at least two full-length lines to compare"
+    wrap_length = lengths[0]
+    lengths.pop()
+
+    for seq_line in lengths:    
+        if seq_line != wrap_length:
+            return False
+
+    return True
+
 #######################################
 # Wrap an unwrapped or improperly
 # wrapped FASTA
@@ -165,32 +176,30 @@ def fix_wrap(file, header_whitespace=False, out_dir=None):
     fixed_fasta=general.open_write_file(file_with_wrapping)
     header_pattern = re.compile('^>.*')
     infile = general.open_file(file)
-    dna = ''
-    header = ''
+    header = '';
+    dna    = '';
+    records = []
     for line in infile:
         line = line.rstrip()
         if header_pattern.match(line):
-            if not dna == '': # skip the first (empty record)
-                fixed_fasta.write(header + '\n')
-                wrap = textwrap.fill(dna,60) # Wrap sequence lines after
-                    # 60 bases
-                fixed_fasta.write(wrap + '\n')
+            if dna:
+                records.append([header,dna])
+                dna = ''
             header = line
             if header_whitespace:
-                header = re.sub('\s+', '_', header) # Gets rid of
-                    # whitespace in the headers
-            new_dna = next(infile)
-            new_dna = new_dna.rstrip()
-            dna = new_dna
+                header = re.sub('\s+', '_', header)
         else:
             dna = dna + line
-    else: # For end of file
+
+    for record in records:
+        header, dna = record
         fixed_fasta.write(header + '\n')
-        wrap = textwrap.fill(dna,60) # Wrap sequence lines after
-        # 60 bases
+        wrap = textwrap.fill(dna,60) # Wrap sequence lines after 60 bases
         fixed_fasta.write(wrap + '\n')
+
     fixed_fasta.close()
     infile.close()
+
     return(file_with_wrapping)
 #######################################
 # Check for white space in FASTA
