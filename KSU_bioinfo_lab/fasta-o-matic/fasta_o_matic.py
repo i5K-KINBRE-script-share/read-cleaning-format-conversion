@@ -191,6 +191,10 @@ def fix_wrap(file, header_whitespace=False, out_dir=None):
         else:
             dna = dna + line
 
+    # Catch the last record
+    if dna and header:
+        records.append([header,dna])
+
     for record in records:
         header, dna = record
         fixed_fasta.write(header + '\n')
