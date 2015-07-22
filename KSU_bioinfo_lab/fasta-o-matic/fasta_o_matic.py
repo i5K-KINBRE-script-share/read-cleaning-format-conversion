@@ -144,7 +144,7 @@ def check_wrap(file):
 
 def compare_lengths(lengths):
     '''
-    Compare lene length of >= 2 lines
+    Compare length of >= 2 lines
     '''
 
     assert len(lengths) > 2, "I need at least two full-length lines to compare"
