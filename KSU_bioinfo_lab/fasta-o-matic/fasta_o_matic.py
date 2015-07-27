@@ -23,7 +23,7 @@ import argparse
 class dev_colors:
     '''
         Fonts to indicate when script is under development
-        '''
+    '''
     WARNING = '\033[0;95m'
     BACKGROUND = '\033[10;44m'
     ENDC = '\033[0m'
