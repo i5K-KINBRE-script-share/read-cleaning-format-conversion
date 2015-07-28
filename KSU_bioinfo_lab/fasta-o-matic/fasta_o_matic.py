@@ -167,17 +167,14 @@ def compare_lengths(lengths):
     '''
     Compare length of >= 2 lines
     '''
-
     assert len(lengths) > 2, "I need at least two full-length lines to compare"
     wrap_length = lengths[0]
     lengths.pop()
-
+    
     for seq_line in lengths:    
         if seq_line != wrap_length:
-            return False
-
-    return True
-
+            return(False)
+    return(True)
 #######################################
 # Wrap an unwrapped or improperly
 # wrapped FASTA
@@ -197,8 +194,8 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     fixed_fasta=general.open_write_file(file_with_wrapping)
     header_pattern = re.compile('^>.*')
     infile = general.open_file(fasta_file_name)
-    header = '';
-    dna    = '';
+    header = ''
+    dna    = ''
     for line in infile:
         line = line.rstrip()
         if header_pattern.match(line):

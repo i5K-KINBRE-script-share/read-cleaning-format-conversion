@@ -1,6 +1,2 @@
 .DS_Store
-KSU_bioinfo_lab/util/Colorer.pyc
-KSU_bioinfo_lab/*/__pycache__/
-KSU_bioinfo_lab/util/general.pyc
-KSU_bioinfo_lab/clean_illumina/trimmomatic_template.pyc
-KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.pyc
+

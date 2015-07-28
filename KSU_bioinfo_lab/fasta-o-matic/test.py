@@ -32,7 +32,8 @@ def get_count(fasta_file_name):
     header_pattern = re.compile('^>.*')
     line_count = 0
     header_count = 0
-    if sys.version_info > (3, 0):
+    if sys.version_info > (3, 0): # Open without automatically converting
+        # newlines to standard Unix newlines for python3.3+
         fasta_file = open(fasta_file_name, 'r',  newline='')
     else:
         fasta_file = general.open_file(fasta_file_name)
@@ -137,11 +138,3 @@ def test_all(out_dir):
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     return(True)
-
-
-
-# Line 31 only works with absolute paths (or at least paths without ~)
-# test.test_all('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
-# test.test_newline('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
-# test.test_wrapping('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
-
