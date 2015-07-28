@@ -22,14 +22,24 @@ def open_file(file):
         error from running the open function as a message.
     '''
     full_path2=convert_to_full(file)
-    try:
-        input = open(full_path2, 'r')
-    except IOError as e:
-        log.error('"%(e)s"' % locals()) # Print Input/output error
-        sys.exit(0) # Kill program
-    except:
-        log.error('caught: %s' % sys.exc_info()[0]) # Print general error
-        pass
+    if sys.version_info > (3, 0):
+        try:
+            input = open(full_path2, 'r')
+        except IOError as e:
+            log.error('"%(e)s"' % locals()) # Print Input/output error
+            sys.exit(0) # Kill program
+        except:
+            log.error('caught: %s' % sys.exc_info()[0]) # Print general error
+            pass
+    else:
+        try:
+            input = open(file, 'rU')
+        except IOError as e:
+            log.error('"%(e)s"' % locals()) # Print Input/output error
+            sys.exit(0) # Kill program
+        except:
+            log.error('caught: %s' % sys.exc_info()[0]) # Print general error
+            pass
     return(input)
 def open_write_file(file):
     '''

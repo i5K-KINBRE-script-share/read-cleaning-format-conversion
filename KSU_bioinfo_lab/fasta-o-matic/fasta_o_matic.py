@@ -67,7 +67,7 @@ def check_new_line(fasta_file_name):
         infile = open(fasta_file_name, 'r',  newline='') # Python3 will read
     # all newlines as \n so we open without converting them to test
     else:
-        infile = general.open_file(fasta_file_name)
+        infile = open(fasta_file_name, 'r')
     last_char=''
     for line in infile:
         last_char = line[-1] # grab the last character
