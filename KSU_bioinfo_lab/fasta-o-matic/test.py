@@ -13,11 +13,16 @@ sys.path.append(util_dir)
 import general
 import re
 import fasta_o_matic
-
+#######################################
+# Correct values
+#######################################
 missing_last_new_line_fixed = [14,3]
 carriage_return_fixed = [4,1]
 unwrapped_fixed = [14,3]
 miswrapped_fixed = [15, 3]
+#######################################
+# Generic functions
+#######################################
 def get_count(fasta_file_name):
     '''
         Takes a FASTA file path and returns the number of lines and the
@@ -39,88 +44,100 @@ def get_count(fasta_file_name):
             header_count = header_count + 1
     fasta_file.close()
     return(line_count,header_count)
-def check_count(correct,tbd):
-    '''
-        Compares number of lines and sequences from to ordered lists to test 
-        for equality.
-    '''
-    if correct == tbd:
-        print('Is true!')
-    else:
-        print('Is false')
-
-input_fasta = 'missing_last_new_line.fa'
-steps = ['new_line','header_whitespace']
-fixed_name = missing_last_new_line_fixed
 
 def main_test(input_fasta, steps, fixed_name, out_dir):
+    '''
+        Compares number of lines and sequences from two ordered lists to test
+        for equality.
+    '''
     # missing last new_line test
     fasta_1_file_name = parent_dir + '/fasta/' + input_fasta
-    (pre_line_count,pre_seq_count) = get_count(fasta_1_file_name)
-    post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir)
+    post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir) # reformat FASTA file
     (post_line_count,post_seq_count) = get_count(post_fasta_1_file_name)
-    print('# quick test ' + input_fasta)
-    check_count(fixed_name, [post_line_count,post_seq_count])
-
+    print('# quick test ' + input_fasta + '...')
+    correct = fixed_name
+    tbd = [post_line_count,post_seq_count]
+    if correct == tbd:
+        return(True)
+    else:
+        return(False)
+#######################################
+# Check results of groups of
+# reformatting job types
+#######################################
 def test_newline(out_dir):
+    '''
+        Test specifically FASTA files with broken newlines
+    '''
     # missing last new_line test
     input_fasta = 'missing_last_new_line.fa'
     steps = ['new_line']
     fixed_name = missing_last_new_line_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # carriage return test
     input_fasta = 'carriage_return.fa'
     steps = ['new_line','header_whitespace']
     fixed_name = carriage_return_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # carriage return test2
     input_fasta = 'carriage_return.fa'
     steps = ['new_line']
     fixed_name = carriage_return_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
-#    # carriage return test3
-#    input_fasta = 'carriage_return.fa'
-#    steps = ['wrap','header_whitespace']
-#    fixed_name = carriage_return_fixed
-#    main_test(input_fasta, steps, fixed_name, out_dir)
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
+    return(True)
 
 def test_wrapping(out_dir):
+    '''
+        Test specifically FASTA files with broken wrapping
+    '''
     # miswrapped test
     input_fasta = 'miswrapped.fa'
     steps = ['wrap','header_whitespace']
     fixed_name = miswrapped_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # unwrapped test
     input_fasta = 'unwrapped.fa'
     steps = ['wrap']
     fixed_name = unwrapped_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
+    return(True)
 
 def test_all(out_dir):
+    '''
+        Test specifically FASTA files with either broken newlines or 
+        broken wrapping using all three cleaning steps.
+    '''
     # missing last new_line test ALL
     input_fasta = 'missing_last_new_line.fa'
     steps = ['new_line','wrap','header_whitespace']
     fixed_name = missing_last_new_line_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
-    
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # carriage return test ALL
     input_fasta = 'carriage_return.fa'
     steps = ['new_line','wrap','header_whitespace']
     fixed_name = carriage_return_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
-    
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # miswrapped test ALL
     input_fasta = 'miswrapped.fa'
     steps = ['new_line','wrap','header_whitespace']
     fixed_name = miswrapped_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
-    
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
     # unwrapped test ALL
     input_fasta = 'unwrapped.fa'
     steps = ['new_line','wrap','header_whitespace']
     fixed_name = unwrapped_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
-    
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
+    return(True)
+
 
 
 # Line 31 only works with absolute paths (or at least paths without ~)

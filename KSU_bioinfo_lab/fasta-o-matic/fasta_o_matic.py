@@ -16,10 +16,11 @@ import logging as log
 import general
 import textwrap
 import argparse
+import test
+from os.path import expanduser
 ##########################################################################
 ##############                  Custom classes                ############
 ##########################################################################
-
 class dev_colors:
     '''
         Fonts to indicate when script is under development
@@ -53,6 +54,18 @@ def doc():
     print('###########################################################')
 color_errors_warnings('       Warning: Script currently under development!!       ')
 # uncomment line above for development versions
+
+##########################################################################
+##############                   Unit Tests                  ############
+##########################################################################
+def test_reformatting(out_test_dir):
+    home = os.path.expanduser("~")
+    test_dir = home + '/tmp'
+    general.mk_out_sub_directory(test_dir)
+    assert test.test_all(test_dir), 'Failed to reformat when all three steps were called'
+    assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
+    assert test.test_wrapping(test_dir), 'Failed to reformat when only wrapping and header reformatting was used'
+
 #######################################
 # Check for last new line
 #######################################
@@ -186,7 +199,6 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     infile = general.open_file(fasta_file_name)
     header = '';
     dna    = '';
-#    records = []
     for line in infile:
         line = line.rstrip()
         if header_pattern.match(line):
@@ -325,7 +337,16 @@ def main():
         log.info('Output is verbose. Run with -q, --quiet flag to suppress full output.')
     else:
         log.basicConfig(format='%(levelname)s: %(message)s')
-
+    log.info('#######################################')
+    log.info('# Unit testing...')
+    log.info('#######################################')
+    log.disable(log.CRITICAL)
+    test_reformatting('~')
+    log.disable(log.NOTSET)
+    log.info('#######################################')
+    log.info('# Done unit testing.')
+    log.info('#######################################')
+    # Run reformatting
     run_steps(args.fasta_file_name, args.steps, args.out_dir)
 
 def run_steps(fasta_file_name, steps, out_dir):
@@ -354,7 +375,7 @@ def run_steps(fasta_file_name, steps, out_dir):
     log.info('Done checking for fatal errors.')
     # Next check for non-fatal errors:
     log.info('Checking for non-fatal errors...')
-    print(qc_set)
+#    print(qc_set)
     if 'wrap' in qc_set:
         log.info('Running FASTA wrapping QC...')
         if check_wrap(fasta_file_name):
