@@ -65,7 +65,7 @@ def main_test(input_fasta, steps, fixed_name, out_dir):
 def test_newline(out_dir):
     # missing last new_line test
     input_fasta = 'missing_last_new_line.fa'
-    steps = ['new_line','header_whitespace']
+    steps = ['new_line']
     fixed_name = missing_last_new_line_fixed
     main_test(input_fasta, steps, fixed_name, out_dir)
     # carriage return test
@@ -78,11 +78,11 @@ def test_newline(out_dir):
     steps = ['new_line']
     fixed_name = carriage_return_fixed
     main_test(input_fasta, steps, fixed_name, out_dir)
-    # carriage return test3
-    input_fasta = 'carriage_return.fa'
-    steps = ['wrap']
-    fixed_name = carriage_return_fixed
-    main_test(input_fasta, steps, fixed_name, out_dir)
+#    # carriage return test3
+#    input_fasta = 'carriage_return.fa'
+#    steps = ['wrap','header_whitespace']
+#    fixed_name = carriage_return_fixed
+#    main_test(input_fasta, steps, fixed_name, out_dir)
 
 def test_wrapping(out_dir):
     # miswrapped test
@@ -124,7 +124,7 @@ def test_all(out_dir):
 
 
 # Line 31 only works with absolute paths (or at least paths without ~)
-# test.test_all('/Users/jennifer_shelton/out_stanford_swc')
-# test.test_newline('/Users/jennifer_shelton/out_stanford_swc')
-# test.test_wrapping('/Users/jennifer_shelton/out_stanford_swc')
+# test.test_all('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
+# test.test_newline('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
+# test.test_wrapping('/Users/jennifer_shelton/test_current_repo/sheltonj/py2')
 

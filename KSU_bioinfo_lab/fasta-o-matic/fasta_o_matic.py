@@ -97,7 +97,8 @@ def fix_new_line(file, header_whitespace=False, out_dir=None):
         line=line.rstrip()
         if header_pattern.match(line):
             header = line
-            header = re.sub('\s+', '_', header)
+            if header_whitespace:
+                header = re.sub('\s+', '_', header)
             line = header
         fixed_fasta.write(line + '\n')
     fixed_fasta.close()
