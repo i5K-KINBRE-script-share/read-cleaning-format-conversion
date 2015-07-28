@@ -56,14 +56,18 @@ def doc():
 #######################################
 # Check for last new line
 #######################################
-def check_new_line(file):
+def check_new_line(fasta_file_name):
     '''
         Returns True if the last line in a FASTA file ends in the 
         standard new line character ('\\n'). Returns False if not.
         Test also fails if the sequence lines ends in the less common
         '\\r' character.
     '''
-    infile = general.open_file(file)
+    if sys.version_info > (3, 0):
+        infile = open(fasta_file_name, 'r',  newline='') # Python3 will read
+    # all newlines as \n so we open without converting them to test
+    else:
+        infile = general.open_file(fasta_file_name)
     last_char=''
     for line in infile:
         last_char = line[-1] # grab the last character
@@ -89,7 +93,10 @@ def fix_new_line(file, header_whitespace=False, out_dir=None):
     if out_dir is not None:
         out_path = out_dir # switch to user specified output directory
     file_with_new_line = out_path + '/' +  out_basename + suffix
-    broken_fasta=general.open_file(file)
+    if sys.version_info > (3, 0):
+        broken_fasta=general.open_file(file)
+    else:
+        broken_fasta = open(file, 'rU')
     fixed_fasta=general.open_write_file(file_with_new_line)
     header_pattern = re.compile('^>.*')
     header = ''
@@ -379,12 +386,10 @@ def run_steps(file, steps, out_dir):
         # characters have already been corrected so skip new_line
         # correction.
         new_line_passed = check_new_line(file)
-        if sys.version_info > (3, 0):
-            log.warning('Python3 will read all newlines as \\n we will replace newlines to be safe.')
-        elif new_line_passed:
+        if new_line_passed:
             log.info('\tNew_line: good')
-        if sys.version_info > (3, 0) or not new_line_passed:
-            log.warning('\tNew_line: may be bad. Correcting FASTA now...')
+        if not new_line_passed:
+            log.warning('\tNew_line: bad. Correcting FASTA now...')
             if header_whitespace:
                 log.info('''\tAny white space in headers will be replaced 
                     with \'-\' while correcting new lines now...''')
