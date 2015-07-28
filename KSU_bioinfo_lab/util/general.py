@@ -16,12 +16,12 @@ def convert_to_full(path):
     full_path2 = os.path.abspath(full_path) # works on path relative to the
     # current working directory
     return(full_path2)
-def open_file(file):
+def open_file(file_name):
     '''
         Returns opened (for reading) file object or kills program and relays 
         error from running the open function as a message.
     '''
-    full_path2=convert_to_full(file)
+    full_path2=convert_to_full(file_name)
     if sys.version_info > (3, 0):
         try:
             input = open(full_path2, 'r')
@@ -33,7 +33,7 @@ def open_file(file):
             pass
     else:
         try:
-            input = open(file, 'rU')
+            input = open(full_path2, 'rU')
         except IOError as e:
             log.error('"%(e)s"' % locals()) # Print Input/output error
             sys.exit(0) # Kill program
@@ -41,27 +41,27 @@ def open_file(file):
             log.error('caught: %s' % sys.exc_info()[0]) # Print general error
             pass
     return(input)
-def open_write_file(file):
+def open_write_file(file_name):
     '''
         Returns opened (for writing) file object or kills program and relays
         error from running the open function as a message.
         '''
-    full_path2=convert_to_full(file)
+    full_path2=convert_to_full(file_name)
     try:
-        input = open(full_path2, 'w')
+        output = open(full_path2, 'w')
     except IOError as e:
         log.error('"%(e)s"' % locals()) # Print Input/output error
         sys.exit(0) # Kill program
     except:
         log.error('caught: %s' % sys.exc_info()[0]) # Print general error
         pass
-    return(input)
+    return(output)
 
-def parse_filename(file):
+def parse_filename(file_name):
     '''
         Returns path, basename and extension for filenames.
     '''
-    full_path2=convert_to_full(file)
+    full_path2=convert_to_full(file_name)
     (path_and_basename,ext)=os.path.splitext(full_path2) # ext begins with '.'
     path=os.path.dirname(path_and_basename) # has no trailing slash
     basename=os.path.basename(path_and_basename)
