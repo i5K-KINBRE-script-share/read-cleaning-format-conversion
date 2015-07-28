@@ -186,27 +186,26 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     infile = general.open_file(fasta_file_name)
     header = '';
     dna    = '';
-    records = []
+#    records = []
     for line in infile:
         line = line.rstrip()
         if header_pattern.match(line):
             if dna:
-                records.append([header,dna])
+                fixed_fasta.write(header + '\n')
+                wrap = textwrap.fill(dna,60) # Wrap sequence lines after
+                # 60 bases
+                fixed_fasta.write(wrap + '\n')
                 dna = ''
             header = line
             if header_whitespace:
                 header = re.sub('\s+', '_', header)
         else:
             dna = dna + line
-
     # Catch the last record
-    if dna and header:
-        records.append([header,dna])
-
-    for record in records:
-        header, dna = record
+    else: # For end of file
         fixed_fasta.write(header + '\n')
-        wrap = textwrap.fill(dna,60) # Wrap sequence lines after 60 bases
+        wrap = textwrap.fill(dna,60) # Wrap sequence lines after
+        # 60 bases
         fixed_fasta.write(wrap + '\n')
 
     fixed_fasta.close()
