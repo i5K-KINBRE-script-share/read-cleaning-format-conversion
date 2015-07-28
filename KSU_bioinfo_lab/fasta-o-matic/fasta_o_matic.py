@@ -51,7 +51,7 @@ def doc():
     print('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
     print('#  python3 clean_illumina.py --help # for usage/options   #')
     print('###########################################################')
-#color_errors_warnings('       Warning: Script currently under development!!       ')
+color_errors_warnings('       Warning: Script currently under development!!       ')
 # uncomment line above for development versions
 #######################################
 # Check for last new line
