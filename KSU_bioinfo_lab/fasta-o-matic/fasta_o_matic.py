@@ -62,7 +62,7 @@ def test_reformatting(out_test_dir):
     out_test_dir = os.path.expanduser(out_test_dir)
     test_dir = out_test_dir + '/tmp'
 #    general.mk_out_sub_directory(test_dir)
-    assert general.mk_out_sub_directory(test_dir), 'Failed to create directory for Unit testing check that output directory exists and can be written to'
+    assert general.mk_out_sub_directory(test_dir), 'Failed to create output sub-directory for Unit testing. Check that your output directory exists and can be written to.'
     assert (test.test_all(test_dir)), 'Failed to reformat when all three steps were called'
     assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
     assert test.test_wrapping(test_dir), 'Failed to reformat when only wrapping and header reformatting was used'
