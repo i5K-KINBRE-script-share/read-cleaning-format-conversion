@@ -14,7 +14,7 @@ Fasta-O-Matic runs quality checking of the FASTA file format. File format errors
 
 Fasta-O-Matic is designed to prepare adapter FASTA files for Trimmomatic but can be used as a general pre-processing tool in bioinformatics workflows (e.g. to automatically wrap FASTA files so that they can be read by BioPerl).
 
-As you work through this example your should read about the software are using by generating and reading the help menu. Find out about 
+As you work through this example your should read about the software are using by generating and reading the help menu. Find out about FASTA format at http://blast.ncbi.nlm.nih.gov/blastcgihelp.shtml. 
 
 ###Step 1: Clone the Git repositories 
 
