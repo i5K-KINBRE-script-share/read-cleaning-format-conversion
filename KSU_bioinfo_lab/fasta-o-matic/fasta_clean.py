@@ -21,7 +21,11 @@ def doc():
         Print standard information about script.
     '''
     print('###########################################################')
-    print('#  fasta_clean.py Version 0.0.1                         #')
+    print('#  fasta_clean.py Version 0.0.1                           #')
+    print('       Warning: Script currently under development!!      #')
+    print('       This script was designed to test parsing files     #') 
+    print('       with BioPython. It has not been tested to          #')
+    print('       reformat FASTA files yet!!                         #')
     print('###########################################################')
 
 # Assume the file is broken and make a new one with 
