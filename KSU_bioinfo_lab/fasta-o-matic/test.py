@@ -59,6 +59,8 @@ def main_test(input_fasta, steps, fixed_name, out_dir):
     correct = fixed_name
     tbd = [post_line_count,post_seq_count]
     if correct == tbd:
+        if not fasta_1_file_name == post_fasta_1_file_name: # NEVER DELETE THE ORIGINAL SAMPLE FILE
+            os.remove(post_fasta_1_file_name)
         return(True)
     else:
         return(False)
