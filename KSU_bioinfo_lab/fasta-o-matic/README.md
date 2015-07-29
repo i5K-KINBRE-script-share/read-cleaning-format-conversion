@@ -2,7 +2,7 @@
 
 <a href="url"><img src="https://raw.githubusercontent.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/master/KSU_bioinfo_lab/fasta-o-matic/sequence_data_tools.png" align="left" width="348" ></a>
 
-Fasta-O-Matic is a quality control script the makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
+Fasta-O-Matic is a quality control script that makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
 
 All of the scripts you will need to run the commands below as well as the sample datasets will be copied to your computer as you follow the instructions below. You should type or paste the text in the beige code block into your terminal as you follow along with the instructions below.
 
@@ -60,7 +60,7 @@ Run the command below to view the final line of the FASTA file:
 tail ~/read-cleaning-format-conversion/KSU_bioinfo_lab/sample_data/NC_010473_mock_scaffolds.fna
 ```
 
-This FASTA file is also missing the last newline. When a FASTA file is missing the last new line often it means that the file content is correct but the researcher overlooked finishing the file with a newline (e.g. the adapter sequence FASTA files for Trimmomatic). It could also be a sign that the FASTA file has corrupted (e.g. a file transfer failed before completing the transfer).
+This FASTA file is also missing the last newline. When a FASTA file is missing the last new line often it means that the file content is correct but the researcher overlooked finishing the file with a newline (e.g. the adapter sequence FASTA files for Trimmomatic). It could also be a sign that the FASTA file has been corrupted (e.g. a file transfer failed before completing the transfer).
 
 The lack of the final newline can cause serious problems in downstream analysis. For example FASTA files are commonly joined by concatenating one file to another. A missing final new line would cause the last sequence from one file to be merged with the first header from the next file. This new chimeric sequence and the now header-less sequence that would follow could not be properly loaded by downstream tools as all tools depend on headers to identify and separate sequences.
 
