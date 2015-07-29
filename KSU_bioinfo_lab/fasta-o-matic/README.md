@@ -28,6 +28,12 @@ cd
 git clone https://github.com/i5K-KINBRE-script-share/read-cleaning-format-conversion.git
 ```
 
+Fasta-O-Matic runs with either Python2.7+ or Python3.3+. Find out about all the options for Fasta-O-Matic by reading the help menu:
+
+```
+python ~/read-cleaning-format-conversion/KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.py --help
+```
+
 ###Step 2: Create project directory
 
 Make a project output directory.
@@ -66,7 +72,7 @@ The lack of the final newline can cause serious problems in downstream analysis.
 By default Fasta-O-Matic checks/reformats wrapping, newlines and headers with spaces. Run the following to reformat all three issues at once.
 
 ```
-python3 ~/read-cleaning-format-conversion/KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.py -f ~/read-cleaning-format-conversion/KSU_bioinfo_lab/sample_data/NC_010473_mock_scaffolds.fna -o ~/out_fasta_o_matic -c
+python ~/read-cleaning-format-conversion/KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.py -f ~/read-cleaning-format-conversion/KSU_bioinfo_lab/sample_data/NC_010473_mock_scaffolds.fna -o ~/out_fasta_o_matic -c
 ```
 
 Check your results:
@@ -83,7 +89,7 @@ You may also wish to only check/reformat a FASTA file for specific problems (e.g
 Try for example:
 
 ```
-python3 ~/read-cleaning-format-conversion/KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.py -f ~/read-cleaning-format-conversion/KSU_bioinfo_lab/sample_data/NC_010473_mock_scaffolds.fna -o ~/out_fasta_o_matic -s wrap new_line -c
+python ~/read-cleaning-format-conversion/KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.py -f ~/read-cleaning-format-conversion/KSU_bioinfo_lab/sample_data/NC_010473_mock_scaffolds.fna -o ~/out_fasta_o_matic -s wrap new_line -c
 ```
 
 Check your results with:
