@@ -342,7 +342,10 @@ def main():
     log.info('# Unit testing...')
     log.info('#######################################')
     log.disable(log.CRITICAL)
-    test_reformatting(args.out_dir)
+    (out_path,out_basename,out_ext)=general.parse_filename(args.fasta_file_name)
+    if args.out_dir is not None:
+        out_path = args.out_dir # switch to user specified output directory
+    test_reformatting(out_path)
     log.disable(log.NOTSET)
     log.info('#######################################')
     log.info('# Done unit testing.')
