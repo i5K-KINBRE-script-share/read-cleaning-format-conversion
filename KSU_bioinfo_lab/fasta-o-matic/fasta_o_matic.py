@@ -184,7 +184,7 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     '''
         Wraps text in a FASTA file so that no line of sequence has more
         than 60 bases. Wrapped file is saved with the suffix '_wrap.fasta'.
-        '''
+    '''
     suffix = '_wrap.fasta'
     if header_whitespace:
         suffix = '_wrap_h.fasta'
@@ -220,8 +220,6 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
         if dna:
             fixed_fasta.write(dna + '\n') # print remaining sequence
         # before header
-    
-    
     fixed_fasta.close()
     infile.close()
 
