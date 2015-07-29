@@ -78,11 +78,16 @@ def mk_out_sub_directory(path):
         parent directory). Block only warns if output directory 
         already exists.
     '''
+    if (os.path.isdir(path)):
+        return(True)
     try:
         os.mkdir(path)
+        return(True)
     except OSError as e:
         log.warning('%(e)s' % locals())
         pass
+        return(False)
     except:
         log.error('caught: %s' % sys.exc_info()[0]) # Print general error
         pass
+        return(False)
