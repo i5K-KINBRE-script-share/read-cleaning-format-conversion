@@ -2,7 +2,7 @@
 
 <a href="url"><img src="https://raw.githubusercontent.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/master/KSU_bioinfo_lab/fasta-o-matic/sequence_data_tools.png" align="left" width="348" ></a>
 
-A quality control script the makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
+Fasta-O-Matic is a quality control script the makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
 
 All of the scripts you will need to run the commands below as well as the sample datasets will be copied to your computer as you follow the instructions below. You should type or paste the text in the beige code block into your terminal as you follow along with the instructions below.
 
