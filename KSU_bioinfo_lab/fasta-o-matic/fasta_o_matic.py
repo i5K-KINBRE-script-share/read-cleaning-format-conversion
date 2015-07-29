@@ -182,9 +182,9 @@ def compare_lengths(lengths):
 #######################################
 def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     '''
-        Wraps text in a FASTA file so that no line of sequence has more 
+        Wraps text in a FASTA file so that no line of sequence has more
         than 60 bases. Wrapped file is saved with the suffix '_wrap.fasta'.
-    '''
+        '''
     suffix = '_wrap.fasta'
     if header_whitespace:
         suffix = '_wrap_h.fasta'
@@ -195,33 +195,38 @@ def fix_wrap(fasta_file_name, header_whitespace=False, out_dir=None):
     fixed_fasta=general.open_write_file(file_with_wrapping)
     header_pattern = re.compile('^>.*')
     infile = general.open_file(fasta_file_name)
-    header = ''
     dna    = ''
     for line in infile:
         line = line.rstrip()
-        if header_pattern.match(line):
-            if dna:
-                fixed_fasta.write(header + '\n')
-                wrap = textwrap.fill(dna,60) # Wrap sequence lines after
-                # 60 bases
-                fixed_fasta.write(wrap + '\n')
-                dna = ''
+        if header_pattern.match(line): # Print headers immediately to new file
             header = line
             if header_whitespace:
                 header = re.sub('\s+', '_', header)
-        else:
+            if dna:
+                fixed_fasta.write(dna + '\n') # print remaining sequence
+                # before header
+            fixed_fasta.write(header + '\n')
+            dna = '' # Reset DNA
+        else: # if the line is sequence data dump sequence as fast as it is
+            # long enough to wrap
             dna = dna + line
+            while len(dna) > 59: # Wrap sequence lines after
+                # 60 bases
+                wrap_line = dna[0:60]
+                dna = dna[60:len(dna)]
+                fixed_fasta.write(wrap_line + '\n')
     # Catch the last record
     else: # For end of file
-        fixed_fasta.write(header + '\n')
-        wrap = textwrap.fill(dna,60) # Wrap sequence lines after
-        # 60 bases
-        fixed_fasta.write(wrap + '\n')
-
+        if dna:
+            fixed_fasta.write(dna + '\n') # print remaining sequence
+        # before header
+    
+    
     fixed_fasta.close()
     infile.close()
 
     return(file_with_wrapping)
+
 #######################################
 # Check for white space in FASTA
 # headers
