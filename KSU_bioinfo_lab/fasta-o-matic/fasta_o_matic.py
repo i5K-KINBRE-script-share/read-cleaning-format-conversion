@@ -63,13 +63,13 @@ def test_reformatting(out_test_dir):
     test_dir = out_test_dir + '/tmp'
     if (os.path.isdir(out_test_dir)): # Warn if output directory already exists
         log.disable(log.NOTSET) # flip logging back on
-        log.warning('Your output directory already exists. Your output directory may already contain output from Fasta-O-Matic in %(out_test_dir)s' % locals())
+        log.warning('Your output directory already exists. Your output directory may already contain output from Fasta-O-Matic in %(out_test_dir)s.' % locals())
         log.disable(log.CRITICAL) # disable most log output again
     assert general.mk_out_sub_directory(test_dir), 'Failed to create output sub-directory for Unit testing. Check that your output directory exists and can be written to.'
     assert (test.test_all(test_dir)), 'Failed to reformat when all three steps were called'
     assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
     assert test.test_wrapping(test_dir), 'Failed to reformat when only wrapping and header reformatting was used'
-#    os.rmdir(test_dir)
+    os.rmdir(test_dir)
 #######################################
 # Check for last new line
 #######################################
