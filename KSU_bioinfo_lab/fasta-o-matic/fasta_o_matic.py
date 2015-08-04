@@ -374,7 +374,7 @@ def run_steps(fasta_file_name, steps, out_dir):
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
         USAGE: fasta_o_matic.run_steps('/usr/me/test.fasta',
-        ['wrap', 'new_line','header_whitespace'])
+        ['wrap', 'new_line','header_whitespace'], '/Users/jennifer_shelton/out_fasta_o_matic')
     '''
     log.info('#######################################')
     log.info('# Running Fasta_O_Matic...')
