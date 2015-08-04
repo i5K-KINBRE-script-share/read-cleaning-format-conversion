@@ -8,9 +8,10 @@
 import sys
 import os
 import logging as log
+import errno
 def convert_to_full(path):
     '''
-        Returns full path from a partial path
+        Returns absolute path from a relative path.
     '''
     full_path = os.path.expanduser(path) # only works on '~'
     full_path2 = os.path.abspath(full_path) # works on path relative to the
@@ -19,10 +20,12 @@ def convert_to_full(path):
 def open_file(file_name):
     '''
         Returns opened (for reading) file object or kills program and relays 
-        error from running the open function as a message.
+        error from running the open function as a log message. If error is of
+        unexpected type returns content of the error message but attempts
+        to keep runnning.
     '''
     full_path2=convert_to_full(file_name)
-    if sys.version_info > (3, 0):
+    if sys.version_info > (3, 0): # For python3.3+ ...
         try:
             input = open(full_path2, 'r')
         except IOError as e:
@@ -30,8 +33,7 @@ def open_file(file_name):
             sys.exit(0) # Kill program
         except:
             log.error('caught: %s' % sys.exc_info()[0]) # Print general error
-            pass
-    else:
+    else: # For python2.7+ convert all newlines to standard \n to be safe
         try:
             input = open(full_path2, 'rU')
         except IOError as e:
@@ -39,13 +41,14 @@ def open_file(file_name):
             sys.exit(0) # Kill program
         except:
             log.error('caught: %s' % sys.exc_info()[0]) # Print general error
-            pass
     return(input)
 def open_write_file(file_name):
     '''
         Returns opened (for writing) file object or kills program and relays
-        error from running the open function as a message.
-        '''
+        error from running the open function as a message. If error is of
+        unexpected type returns content of the error message but attempts
+        to keep runnning.
+    '''
     full_path2=convert_to_full(file_name)
     try:
         output = open(full_path2, 'w')
@@ -54,39 +57,42 @@ def open_write_file(file_name):
         sys.exit(0) # Kill program
     except:
         log.error('caught: %s' % sys.exc_info()[0]) # Print general error
-        pass
     return(output)
 
 def parse_filename(file_name):
     '''
-        Returns path, basename and extension for filenames.
+        Returns path (with no trailing slash), basename and extension for filenames.
     '''
     full_path2=convert_to_full(file_name)
-    (path_and_basename,ext)=os.path.splitext(full_path2) # ext begins with '.'
+    (path_and_basename,ext)=os.path.splitext(full_path2) # ext begins with
+    # the last '.'
     path=os.path.dirname(path_and_basename) # has no trailing slash
     basename=os.path.basename(path_and_basename)
     return(path,basename,ext)
 def path_check(path):
+    '''
+        Throw fatal error if path doesn't exist, otherwise return the boolean value True.
+    '''
     if not (os.path.isdir(path)):
         log.error('Error %(path)s does not exist, exiting.' % locals())
         sys.exit(0)
     else:
-        return()
+        return(True)
 def mk_out_sub_directory(path):
     '''
         Create directory (run after testing the existence of the 
         parent directory). Block only warns if output directory 
-        already exists.
+        already exists. Returns the boolean value True or False.
     '''
-    if (os.path.isdir(path)):
-        return(True)
     try:
         os.mkdir(path)
         return(True)
     except OSError as e:
         log.warning('%(e)s' % locals())
-        pass
-        return(False)
+        if e.errno == errno.EEXIST:
+            return(True)
+        else:
+            return(False)
     except:
         log.error('caught: %s' % sys.exc_info()[0]) # Print general error
         pass
