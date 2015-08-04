@@ -127,7 +127,7 @@ def fix_new_line(fasta_file_name, qc_set_func, checked_qc_set_func, out_dir=None
         fixed_fasta.write(line + '\n')
     fixed_fasta.close()
     broken_fasta.close()
-    remove_set = set(['new_line','header']) # Remove both qc steps
+    remove_set = set(['new_line','header_whitespace']) # Remove both qc steps
     # becuase they will be corrected in the final FASTA file
     qc_set_func = qc_set_func.difference(remove_set) # skip finished repairs
     checked_remove_set = set(['new_line'])
@@ -230,7 +230,7 @@ def fix_wrap(fasta_file_name, qc_set_func, checked_qc_set_func, out_dir=None):
         # before header
     fixed_fasta.close()
     infile.close()
-    remove_set = set(['wrap','new_line','header']) # Remove all three qc steps
+    remove_set = set(['wrap','new_line','header_whitespace']) # Remove all three qc steps
     # becuase all will be corrected in the final FASTA file
     qc_set_func = qc_set_func.difference(remove_set) # skip finished repairs
     checked_remove_set = set(['wrap'])
@@ -282,7 +282,7 @@ def fix_headers(fasta_file_name, qc_set_func, checked_qc_set_func, out_dir=None)
         fixed_fasta.write(line + '\n')
     fixed_fasta.close()
     broken_fasta.close()
-    remove_set = set(['header']) # Remove qc step becuase it will be corrected
+    remove_set = set(['header_whitespace']) # Remove qc step becuase it will be corrected
     # in the final FASTA file
     qc_set_func = qc_set_func.difference(remove_set) # skip finished repairs
     checked_qc_set_func = checked_qc_set_func.difference(remove_set) # skip finished checks
@@ -389,10 +389,6 @@ def run_steps(fasta_file_name, steps, out_dir):
         sys.exit(0) # Kill program
     qc_set=set(steps)
     checked_qc_set=set(steps)
-#    if 'header_whitespace' in qc_set:
-#        header_whitespace = True
-#    else:
-#        header_whitespace = False
     log.info('Done checking for fatal errors.')
     # Next check for non-fatal errors:
     log.info('Checking for non-fatal errors...')
@@ -406,8 +402,10 @@ def run_steps(fasta_file_name, steps, out_dir):
             checked_qc_set = checked_qc_set.difference(remove_set) # skip wrap
             # check in furture
         else:
+#            print(qc_set)
             log.warning('\tWrap: bad. Correcting sequence wrap now...')
             (file_with_wrapping, qc_set, checked_qc_set) = fix_wrap(fasta_file_name, qc_set, checked_qc_set, out_dir)
+#            print(qc_set)
             if not file_with_wrapping == fasta_file_name:
                 if not fasta_file_name == original_file: # NEVER DELETE THE ORIGINAL FILE
                     os.remove(fasta_file_name)
@@ -415,9 +413,6 @@ def run_steps(fasta_file_name, steps, out_dir):
         log.info('Done with FASTA wrapping QC.')
     if 'new_line' in qc_set:
         log.info('Running FASTA new line QC...')
-        # If the FASTA file has been wrapped then the new line
-        # characters have already been corrected so skip new_line
-        # correction.
         if check_new_line(fasta_file_name):
             log.info('\tNew_line: good')
             remove_set = set(['new_line'])
@@ -432,11 +427,11 @@ def run_steps(fasta_file_name, steps, out_dir):
                 if not fasta_file_name == original_file: # NEVER DELETE THE ORIGINAL FILE
                     os.remove(fasta_file_name)
             fasta_file_name = new_file
-            header_whitespace = False # if headers were fixed skip in future
-            log.info(fasta_file_name)
+#            log.info(fasta_file_name)
+        log.info('Done with FASTA new line QC.')
     if 'header_whitespace' in qc_set:
+        log.info('Running FASTA header whitespace QC...')
         if check_headers(fasta_file_name):
-            log.info('Running FASTA header whitespace QC...')
             log.info('\tHeader whitespace: good')
             remove_set = set(['header_whitespace'])
             qc_set = qc_set.difference(remove_set) # skip header fix in
@@ -446,9 +441,26 @@ def run_steps(fasta_file_name, steps, out_dir):
         else:
             log.warning('\tHeader whitespace: bad. Correcting FASTA now...')
             (headers_whitespace, qc_set, checked_qc_set) = fix_headers(fasta_file_name, qc_set, checked_qc_set, out_dir)
-            log.info('Done with FASTA header whitespace QC.')
             fasta_file_name = headers_whitespace
-    log.info('Done with FASTA new line QC.')
+        log.info('Done with FASTA header whitespace QC.')
+#    print(checked_qc_set)
+    if checked_qc_set:
+        log.info('Checking QC steps skipped after they were corrected in previous step...')
+        if 'wrap' in checked_qc_set:
+            if check_wrap(original_file):
+                log.info('\tWrap: good')
+            else:
+                log.warning('\tWrap: bad')
+        if 'new_line' in checked_qc_set:
+            if check_new_line(original_file):
+                log.info('\tNew_line: good')
+            else:
+                log.warning('\tNew_line: bad')
+        if 'header_whitespace' in checked_qc_set:
+            if check_headers(original_file):
+                log.info('\tHeader whitespace: good')
+            else:
+                log.warning('\tHeader whitespace: bad')
     log.info('Done checking for non-fatal errors.')
     log.info('#######################################')
     log.info('# Done with Fasta_O_Matic.')
