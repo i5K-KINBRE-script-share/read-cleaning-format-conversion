@@ -305,7 +305,27 @@ def check_header_pattern(fasta_file_name):
         return(True)
     else:
         return(False)
-
+#######################################
+# Check for non-IUPAC characters in
+# sequence lines
+#######################################
+def check_iupac(fasta_file_name):
+    '''
+        Check if FASTA file contains non-IUPAC characters in sequence lines. 
+        Returns false if non-IUPAC characters are found and True if non are 
+        found.
+    '''
+    iupac_set = set(['a' , 'b' , 'c' , 'd' , 'e' , 'f' , 'g' , 'h' , 'i' , 'k' , 'l' , 'm' , 'n' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x' , 'y' , 'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'G' , 'H' , 'I' , 'K' , 'L' , 'M' , 'N' , 'P' , 'Q' , 'R' , 'S' , 'T' , 'U' , 'V' , 'W' , 'X' , 'Y' , '-' , '*'])
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(fasta_file_name)
+    for line in infile:
+        if not header_pattern.match(line):
+            line = line.rstrip()
+            for char in line:
+                if not char in iupac_set: # check each character against IUPAC set
+                    log.error('\tError: %(char)s in sequence line' % locals())
+                    return(False)
+    return(True)
 #######################################
 # Main function runs quality checking
 # and filtering based on a
@@ -386,6 +406,11 @@ def run_steps(fasta_file_name, steps, out_dir):
         log.info('\tFirst header: good')
     else:
         log.error('\tFile may not be in FASTA format because it does not begin with > for file %(fasta_file_name)s' % locals()) # Print Input/output error
+        sys.exit(0) # Kill program
+    if check_iupac(fasta_file_name):
+        log.info('\tSequence characters: good')
+    else:
+        log.error('\tFile may not be in FASTA format because sequence lines include non-IUPAC characters for file %(fasta_file_name)s' % locals())
         sys.exit(0) # Kill program
     qc_set=set(steps)
     checked_qc_set=set(steps)
