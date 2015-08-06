@@ -9,7 +9,7 @@ import sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 util_dir = os.path.abspath(parent_dir + '/../util')
 sys.path.append(util_dir)
-
+import logging as log
 import general
 import re
 import fasta_o_matic
@@ -55,7 +55,10 @@ def main_test(input_fasta, steps, fixed_name, out_dir):
     fasta_1_file_name = parent_dir + '/fasta/' + input_fasta
     post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir) # reformat FASTA file
     (post_line_count,post_seq_count) = get_count(post_fasta_1_file_name)
-    print('# quick test ' + input_fasta + '...')
+    ####################################
+    # Enable line below when developing
+    ####################################
+#    log.critical('# quick test ' + input_fasta + '...') # Enable when developing
     correct = fixed_name
     tbd = [post_line_count,post_seq_count]
     if correct == tbd:

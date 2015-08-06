@@ -45,14 +45,14 @@ def doc():
     '''
         Print standard information about script.
     '''
-    print('###########################################################')
-    print('#  fasta_o_matic.py Version 1.0.0                         #')
-    print('#                                                         #')
-    print('#  Created by Jennifer M Shelton 7/16/15                  #')
-    print('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
-    print('#  python3 clean_illumina.py --help # for usage/options   #')
-    print('###########################################################')
-color_errors_warnings('       Warning: Script currently under development!!       ')
+    log.info('###########################################################')
+    log.info('#  fasta_o_matic.py Version 1.0.0                         #')
+    log.info('#                                                         #')
+    log.info('#  Created by Jennifer M Shelton 7/16/15                  #')
+    log.info('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
+    log.info('#  python3 clean_illumina.py --help # for usage/options   #')
+    log.info('###########################################################')
+#color_errors_warnings('       Warning: Script currently under development!!       ')
 # uncomment line above for development versions
 
 ##########################################################################
@@ -64,7 +64,7 @@ def test_reformatting(out_test_dir):
     if (os.path.isdir(out_test_dir)): # Warn if output directory already exists
         log.disable(log.NOTSET) # flip logging back on
         log.warning('Your output directory already exists. Your output directory may already contain output from Fasta-O-Matic in %(out_test_dir)s.' % locals())
-        log.disable(log.CRITICAL) # disable most log output again
+        log.disable(log.ERROR) # disable most log output again
     assert general.mk_out_sub_directory(test_dir), 'Failed to create output sub-directory for Unit testing. Check that your output directory exists and can be written to.'
     assert (test.test_all(test_dir)), 'Failed to reformat when all three steps were called'
     assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
@@ -366,14 +366,14 @@ def main():
     parser.add_argument('-o', '--out_dir', dest='out_dir',
                         help='Output directory for any repaired FASTA created (no trailing slash).', default=None,required=False)
     args = parser.parse_args()
-    if args.colorized:
-        import Colorer
     if args.verbose:
-        doc()
         log.basicConfig(format='%(levelname)s:  %(message)s', level=log.DEBUG)
+        doc()
         log.info('Output is verbose. Run with -q, --quiet flag to suppress full output.')
     else:
         log.basicConfig(format='%(levelname)s: %(message)s')
+    if args.colorized:
+        import Colorer
     log.info('#######################################')
     log.info('# Unit testing...')
     log.info('#######################################')
@@ -387,7 +387,8 @@ def main():
     log.info('# Done unit testing.')
     log.info('#######################################')
     # Run reformatting
-    run_steps(args.fasta_file_name, args.steps, args.out_dir)
+    final_fasta_file_name = run_steps(args.fasta_file_name, args.steps, args.out_dir)
+    return(final_fasta_file_name)
 
 def run_steps(fasta_file_name, steps, out_dir):
     '''
@@ -497,4 +498,6 @@ def run_steps(fasta_file_name, steps, out_dir):
 #####                for individual functions                 ############
 ##########################################################################
 if __name__ == '__main__':
-    main()
+    final_fasta_file_name = main()
+    print(final_fasta_file_name)
+
