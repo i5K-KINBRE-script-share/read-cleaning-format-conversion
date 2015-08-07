@@ -65,6 +65,8 @@ def test_reformatting(out_test_dir):
         log.disable(log.NOTSET) # flip logging back on
         log.warning('Your output directory already exists. Your output directory may already contain output from Fasta-O-Matic in %(out_test_dir)s.' % locals())
         log.disable(log.ERROR) # disable most log output again
+    else:
+        assert general.mk_out_sub_directory(out_test_dir), 'Failed to create output directory. Check that your output directory path.'
     assert general.mk_out_sub_directory(test_dir), 'Failed to create output sub-directory for Unit testing. Check that your output directory exists and can be written to.'
     assert (test.test_all(test_dir)), 'Failed to reformat when all three steps were called'
     assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
