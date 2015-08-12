@@ -1,15 +1,15 @@
 Read cleaning and format conversion
 ===================================
 
+KSU_bioinfo_lab
+---------------
+
 ##Fasta-O-Matic: a tool to sanity check and if needed reformat FASTA files
 
 <a href="url"><img src="https://raw.githubusercontent.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/master/KSU_bioinfo_lab/fasta-o-matic/sequence_data_tools.png" align="left" width="348" ></a>
 
 Fasta-O-Matic is a quality control script that makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
 
-
-KSU_bioinfo_lab
----------------
 
 Cite as: Jennifer Shelton et al.. (2015). Irys-scaffolding: Irys-scaffolding tools Version 1.0.0. Zenodo. 10.5281/zenodo.17584
 
