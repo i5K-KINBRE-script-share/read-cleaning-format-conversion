@@ -9,9 +9,19 @@ KSU_bioinfo_lab
 <a href="url"><img src="https://raw.githubusercontent.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/master/KSU_bioinfo_lab/fasta-o-matic/sequence_data_tools.png" align="left" width="348" ></a>
 
 Fasta-O-Matic is a quality control script that makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
+As the shear volume of bioinformatic sequence data increases the only way to take advantage of this content is to more completely automate robust analysis workflows. Analysis bottlenecks are often mundane and overlooked processing steps. Idiosyncrasies in reading and/or writing bioinformatics file formats can halt or impair analysis workflows by interfering with the transfer of data from one informatics tools to another. Fasta-O-Matic automates handling of common but minor format issues that otherwise may halt pipelines. The need for automation must be balanced by the need for manual confirmation that any formatting error is actually minor rather than indicative of a corrupt data file. To that end Fasta-O-Matic reports any issues detected to the user with optionally color coded and quiet or verbose logs.
 
+Fasta-O-Matic can be used as a general pre-processing tool in bioinformatics workflows (e.g. to automatically wrap FASTA files so that they can be read by BioPerl). It was also developed as a sanity check for bioinformatic core facilities that tend to repeat common analysis steps on FASTA files received from disparate sources. Fasta-O-Matic can be set with format requirements specific to downstream tools as a first step in a larger analysis workflow.
 
-Cite as: Jennifer Shelton et al.. (2015). Irys-scaffolding: Irys-scaffolding tools Version 1.0.0. Zenodo. 10.5281/zenodo.17584
+DEPENDENCIES: 
+
+Fasta-O-Matic runs with either Python2.7+ or Python3.3+.
+
+USAGE:
+
+'''
+'''
+Cite as: Jennifer Shelton et al.. (2015). read-cleaning-format-conversion: read-cleaning-format-conversion tools Version 1.0.0. Zenodo. 10.5281/zenodo.17585
 
 [![DOI](https://zenodo.org/badge/12929/i5K-KINBRE-script-share/read-cleaning-format-conversion.svg)](http://dx.doi.org/10.5281/zenodo.17585)
 
