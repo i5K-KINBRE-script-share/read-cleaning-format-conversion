@@ -329,6 +329,33 @@ def check_iupac(fasta_file_name):
                     return(False)
     return(True)
 #######################################
+# Check if header first words are
+# unique in entire FASTA
+#######################################
+def check_unique(fasta_file_name):
+    '''
+        Check if FASTA headers have unique first words. Returns True if header
+        first words are unique. Returns False if header first words are not and 
+        cannot be made unique automatically.
+        '''
+    first_word_set = set()
+    header_pattern = re.compile('^>.*')
+    infile = general.open_file(fasta_file_name)
+    for line in infile:
+        line = line.rstrip()
+        if header_pattern.match(line):
+            if re.match('^>(\S+)',line): # grab first word in description
+                word = re.match('^>(\S+)',line) # grab first word in description
+                current_word = word.group(1)
+                if not current_word in first_word_set:
+                    first_word_set.add(current_word)
+                else:
+                    return(False) # you have seen this first word before!
+            else:
+                return(False) # Blank headers can't pass a test for uniqueness
+    return(True)
+
+#######################################
 # Main function runs quality checking
 # and filtering based on a
 # user-defined list of quality checks
@@ -457,6 +484,30 @@ def run_steps(fasta_file_name, steps, out_dir):
             fasta_file_name = new_file
 #            log.info(fasta_file_name)
         log.info('Done with FASTA new line QC.')
+    if 'unique' in qc_set:
+        log.info('Checking FASTA header uniqueness...')
+        if check_unique(fasta_file_name):
+            log.info('\tHeader uniqueness: good')
+            remove_set = set(['unique'])
+            qc_set = qc_set.difference(remove_set) # skip header fix in
+            # furture
+            checked_qc_set = checked_qc_set.difference(remove_set) # skip
+            # header check in furture
+        else: # attempt to remove header whitespace (in case that makes first words unique)
+            qc_set_header = set(['header_whitespace'])
+            (headers_whitespace, qc_set_header, checked_qc_set) = fix_headers(fasta_file_name, qc_set_header, checked_qc_set, out_dir)
+            if check_unique(headers_whitespace): # check first word uniqueness again
+                log.warning('\tHeader whitespace impact on uniqueness: bad. Correcting FASTA now...')
+                fasta_file_name = headers_whitespace
+                remove_set = set(['header_whitespace'])
+                qc_set = qc_set.difference(remove_set) # skip header fix in
+                # furture
+                checked_qc_set = checked_qc_set.difference(remove_set) # skip
+                # header check in furture
+            else: # if all uniqueness tests fail die
+                os.remove(headers_whitespace)
+                log.error('\tFirst words in FASTA file header/desciption lines were not unique and could not be made unique automatically for file %(fasta_file_name)s' % locals())
+                sys.exit(0) # Kill program
     if 'header_whitespace' in qc_set:
         log.info('Running FASTA header whitespace QC...')
         if check_headers(fasta_file_name):
