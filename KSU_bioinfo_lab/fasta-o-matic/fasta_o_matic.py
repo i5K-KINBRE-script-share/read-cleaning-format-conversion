@@ -389,8 +389,9 @@ def main():
                      the user provided FASTA file.', required=True)
     parser.add_argument('-s', '--qc_steps', nargs='+', dest='steps',
                      help='List of QC steps to  perform on FASTA file \
-                     (default= -s wrap new_line header_whitespace).',
-                     default=['wrap','new_line','header_whitespace'],
+                     options are wrap, new_line, header_whitespace, unique \
+                     (default= -s wrap new_line unique).',
+                     default=['wrap','new_line','unique'],
                      required=False)
     parser.add_argument('-o', '--out_dir', dest='out_dir',
                         help='Output directory for any repaired FASTA created (no trailing slash).', default=None,required=False)
