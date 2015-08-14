@@ -56,7 +56,7 @@ def main_test(input_fasta, steps, fixed_name, out_dir, should_change=True):
     ####################################
     # Enable line below when developing
     ####################################
-    log.critical('# quick test ' + input_fasta + '...') # Enable when developing
+#    log.critical('# quick test ' + input_fasta + '...') # Enable when developing
     # missing last new_line test
     fasta_1_file_name = parent_dir + '/fasta/' + input_fasta
     if should_change: # if the job changed the fasta check that it did the
@@ -130,13 +130,13 @@ def test_unique(out_dir):
     # header_not_unique test.
     input_fasta = 'header_not_unique.fa'
     steps = ['unique']
-    fixed_name = unwrapped_fixed
+    fixed_name = header_not_unique
     if not main_test(input_fasta, steps, fixed_name, out_dir, should_change=False):
         return(False)
     # first_word_not_unique test.
     input_fasta = 'first_word_not_unique.fa'
     steps = ['unique']
-    fixed_name = unwrapped_fixed
+    fixed_name = first_word_not_unique
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     return(True)
@@ -147,25 +147,25 @@ def test_all(out_dir):
     '''
     # missing last new_line test ALL
     input_fasta = 'missing_last_new_line.fa'
-    steps = ['new_line','wrap','header_whitespace']
+    steps = ['new_line','wrap','header_whitespace', 'unique']
     fixed_name = missing_last_new_line_fixed
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     # carriage return test ALL
     input_fasta = 'carriage_return.fa'
-    steps = ['new_line','wrap','header_whitespace']
+    steps = ['new_line','wrap','header_whitespace', 'unique']
     fixed_name = carriage_return_fixed
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     # miswrapped test ALL
     input_fasta = 'miswrapped.fa'
-    steps = ['new_line','wrap','header_whitespace']
+    steps = ['new_line','wrap','header_whitespace', 'unique']
     fixed_name = miswrapped_fixed
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     # unwrapped test ALL
     input_fasta = 'unwrapped.fa'
-    steps = ['new_line','wrap','header_whitespace']
+    steps = ['new_line','wrap','header_whitespace', 'unique']
     fixed_name = unwrapped_fixed
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
