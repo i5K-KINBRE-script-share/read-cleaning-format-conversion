@@ -4,6 +4,11 @@
 
 Fasta-O-Matic is a quality control script that makes FASTA format files compatible for a variety of downstream bioinformatics tools. 
 
+###fasta_o_matic.py Version 1.1.0
+
+Added an optional potentially fatal, potentially non-fatal test for header uniqueness. Now default QC steps are also 'wrap new_line unique' instead of 'wrap new_line header_whitespace'.
+
+###Tutorial
 All of the scripts you will need to run the commands below as well as the sample datasets will be copied to your computer as you follow the instructions below. You should type or paste the text in the beige code block into your terminal as you follow along with the instructions below.
 
 If you would like a quick primer on basic linux commands and running programs from the commandline try these concise lessons from Software Carpentry http://swcarpentry.github.io/shell-novice/. 

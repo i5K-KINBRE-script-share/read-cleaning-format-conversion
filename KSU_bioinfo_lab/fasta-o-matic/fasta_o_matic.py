@@ -46,7 +46,7 @@ def doc():
         Print standard information about script.
     '''
     log.info('###########################################################')
-    log.info('#  fasta_o_matic.py Version 1.0.0                         #')
+    log.info('#  fasta_o_matic.py Version 1.1.0                         #')
     log.info('#                                                         #')
     log.info('#  Created by Jennifer M Shelton 7/16/15                  #')
     log.info('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
@@ -54,6 +54,9 @@ def doc():
     log.info('###########################################################')
 #color_errors_warnings('       Warning: Script currently under development!!       ')
 # uncomment line above for development versions
+# fasta_o_matic.py Version 1.1.0
+#
+# Added an optional potentially fatal, potentially non-fatal test for header uniqueness. Now default QC steps are 'wrap new_line unique' instead of 'wrap new_line header_whitespace'.
 
 ##########################################################################
 ##############                   Unit Tests                  ############
