@@ -71,6 +71,7 @@ def test_reformatting(out_test_dir):
     assert (test.test_all(test_dir)), 'Failed to reformat when all three steps were called'
     assert test.test_newline(test_dir), 'Failed to reformat when only newline and header reformatting was used'
     assert test.test_wrapping(test_dir), 'Failed to reformat when only wrapping and header reformatting was used'
+    assert test.test_unique(test_dir), 'Failed to reformat or die when only testing uniqueness validation and/or reformatting for headers'
     os.rmdir(test_dir)
 #######################################
 # Check for last new line

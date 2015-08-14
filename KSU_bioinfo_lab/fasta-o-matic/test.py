@@ -16,10 +16,12 @@ import fasta_o_matic
 #######################################
 # Correct values
 #######################################
-missing_last_new_line_fixed = [14,3]
-carriage_return_fixed = [4,1]
-unwrapped_fixed = [14,3]
+missing_last_new_line_fixed = [14, 3]
+carriage_return_fixed = [4, 1]
+unwrapped_fixed = [14, 3]
 miswrapped_fixed = [15, 3]
+first_word_not_unique = [14, 3]
+header_not_unique = [9, 3]
 #######################################
 # Generic functions
 #######################################
@@ -46,27 +48,36 @@ def get_count(fasta_file_name):
     fasta_file.close()
     return(line_count,header_count)
 
-def main_test(input_fasta, steps, fixed_name, out_dir):
+def main_test(input_fasta, steps, fixed_name, out_dir, should_change=True):
     '''
         Compares number of lines and sequences from two ordered lists to test
         for equality.
     '''
-    # missing last new_line test
-    fasta_1_file_name = parent_dir + '/fasta/' + input_fasta
-    post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir) # reformat FASTA file
-    (post_line_count,post_seq_count) = get_count(post_fasta_1_file_name)
     ####################################
     # Enable line below when developing
     ####################################
-#    log.critical('# quick test ' + input_fasta + '...') # Enable when developing
-    correct = fixed_name
-    tbd = [post_line_count,post_seq_count]
-    if correct == tbd:
-        if not fasta_1_file_name == post_fasta_1_file_name: # NEVER DELETE THE ORIGINAL SAMPLE FILE
-            os.remove(post_fasta_1_file_name)
-        return(True)
-    else:
-        return(False)
+    log.critical('# quick test ' + input_fasta + '...') # Enable when developing
+    # missing last new_line test
+    fasta_1_file_name = parent_dir + '/fasta/' + input_fasta
+    if should_change: # if the job changed the fasta check that it did the
+        # right change
+        post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir) # reformat FASTA file
+        (post_line_count,post_seq_count) = get_count(post_fasta_1_file_name)
+        correct = fixed_name
+        tbd = [post_line_count,post_seq_count]
+        if correct == tbd:
+            if not fasta_1_file_name == post_fasta_1_file_name: # NEVER DELETE THE ORIGINAL SAMPLE FILE
+                os.remove(post_fasta_1_file_name)
+            return(True)
+        else:
+            return(False)
+    else: #check that the test finds a fatal error and returns a system exit
+        try:
+            post_fasta_1_file_name = fasta_o_matic.run_steps(fasta_1_file_name, steps, out_dir) # reformat FASTA file
+        except SystemExit:
+            return(True)
+        else:
+            return(False)
 #######################################
 # Check results of groups of
 # reformatting job types
@@ -112,7 +123,23 @@ def test_wrapping(out_dir):
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
     return(True)
-
+def test_unique(out_dir):
+    '''
+        Test specifically FASTA files header uniqueness issue
+    '''
+    # header_not_unique test.
+    input_fasta = 'header_not_unique.fa'
+    steps = ['unique']
+    fixed_name = unwrapped_fixed
+    if not main_test(input_fasta, steps, fixed_name, out_dir, should_change=False):
+        return(False)
+    # first_word_not_unique test.
+    input_fasta = 'first_word_not_unique.fa'
+    steps = ['unique']
+    fixed_name = unwrapped_fixed
+    if not main_test(input_fasta, steps, fixed_name, out_dir):
+        return(False)
+    return(True)
 def test_all(out_dir):
     '''
         Test specifically FASTA files with either broken newlines or 
@@ -142,4 +169,5 @@ def test_all(out_dir):
     fixed_name = unwrapped_fixed
     if not main_test(input_fasta, steps, fixed_name, out_dir):
         return(False)
+
     return(True)
