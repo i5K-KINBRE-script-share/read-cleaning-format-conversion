@@ -264,9 +264,8 @@ def check_headers(fasta_file_name):
 #######################################
 def fix_headers(fasta_file_name, qc_set_func, checked_qc_set_func, out_dir=None):
     '''
-        Remove white spaces that break Trimmomatic and some other bioinfo tools 
-        from the headers of a FASTA file. Fixed FASTA file is saved with the 
-        suffix '_h.fasta'.
+        Remove white spaces from the headers of a FASTA file. Fixed FASTA file
+        is saved with the suffix '_h.fasta'.
     '''
     (out_path,out_basename,out_ext)=general.parse_filename(fasta_file_name)
     if out_dir is not None:
@@ -366,7 +365,23 @@ def main():
     '''
         For a given FASTA file function runs all qc steps listed in the
         list of steps.
+        
         USAGE: python fasta_o_matic.py [-h] [-v] [-q] [-c] -f FILE -s STEPS
+        
+        QC STEPS:
+        
+        unique - Checks if FASTA headers have unique first words or can be made unique automatically. May save altered file with suffix '_h.fasta'.
+        
+        new_line - Checks if the last line in a FASTA file ends in the
+        standard new line character ('\\n') and will also fail if the sequence 
+        lines end in the less common '\\r' character. Reformatted files are 
+        saved with the '_ended.fasta' suffix.
+        
+        wrap - Checks if the sequence lines in a FASTA file exceed 80 characters and if all the wrapped lines are the same length (this should be true if the FASTA file is  wrapped). Wrapped file is saved with the suffix
+        '_wrap.fasta'.
+        
+        header_whitespace - Remove white spaces from the headers of a FASTA file.
+        Fixed FASTA file is saved with the suffix '_h.fasta'.
     '''
     ######################################################################
     ############        Get commandline arguments             ############
@@ -376,7 +391,32 @@ def main():
                                      based on a user-defined list of quality \
                                      checks. Command-line options that may be \
                                      omitted (i.e. are NOT required) are shown \
-                                     in square brackets.')
+                                     in square brackets.\
+                                     \
+                                     QC STEPS:\
+                                     \
+                                     unique -- checks if FASTA headers have unique\
+                                     first words or can be made unique \
+                                     automatically. May save altered file with \
+                                     suffix \'_h.fasta\'.\
+                                     \
+                                     new_line -- checks if the last line in a FASTA file ends in the standard new line \
+                                     character (\'\\n\') and will also fail if \
+                                     the sequence lines end in the less common \
+                                     \'\\r\' character. Reformatted files are \
+                                     saved with the \'_ended.fasta\' suffix.\
+                                     \
+                                     wrap -- checks if the sequence lines in a \
+                                     FASTA file exceed 80 characters and if all \
+                                     the wrapped lines are the same length \
+                                     (this should be true if the FASTA file is \
+                                     wrapped). Wrapped file is saved with the \
+                                     suffix \'_wrap.fasta\'.\
+                                     \
+                                     header_whitespace -- remove white spaces \
+                                     from the headers of a FASTA file. Fixed \
+                                     FASTA file is saved with the suffix \
+                                     \'_h.fasta\'.')
     parser.add_argument('-v', '--verbose', action='store_true',
                      dest='verbose', help='Runs reporting status updates',
                      default=True)
