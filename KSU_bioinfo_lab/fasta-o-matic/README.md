@@ -87,7 +87,7 @@ less ~/out_fasta_o_matic/NC_010473_mock_scaffolds_wrap_h.fasta
 ###Step 5: Selectively reformat (skipping header conversion)
 
 
-You may also wish to only check/reformat a FASTA file for specific problems (e.g. you are not concerned with spaces in the FASTA headers). You can pass a space separated list of QC steps with the `-s` or `--qc_steps` flag. The options are one or more of the following three steps: `wrap` `new_line` `header_whitespace`.
+You may also wish to only check/reformat a FASTA file for specific problems (e.g. you are not concerned with spaces in the FASTA headers). You can pass a space separated list of QC steps with the `-s` or `--qc_steps` flag. The options are one or more of the following three steps: `wrap` `new_line` `unique` `header_whitespace`.
 
 Try for example:
 
@@ -100,3 +100,21 @@ Check your results with:
 ```
 less ~/out_fasta_o_matic/NC_010473_mock_scaffolds_wrap.fasta
 ```
+###Find out more about the QC steps:
+
+
+**unique** - Checks if FASTA headers have unique first words or can be 
+made unique automatically. May save altered fill with suffix '_h.fasta'.
+
+**new_line** - Checks if the last line in a FASTA file ends in the
+standard new line character ('\\n') and will also fail if the sequence 
+lines end in the less common '\\r' character. Reformatted files are 
+saved with the '_ended.fasta' suffix.
+
+**wrap** - Checks if the sequence lines in a FASTA file exceed 80 characters 
+and if all the wrapped lines are the same length (this should be true if 
+the FASTA file is  wrapped). Wrapped file is saved with the suffix
+'_wrap.fasta'.
+
+ **header_whitespace** - Remove white spaces from the headers of a FASTA file.
+Fixed FASTA file is saved with the suffix '_h.fasta'.
