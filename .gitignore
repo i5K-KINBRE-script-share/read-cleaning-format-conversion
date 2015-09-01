@@ -1,2 +1,4 @@
-.DS_Store
-
+KSU_bioinfo_lab/fasta-o-matic/fasta_o_matic.pyc
+*/*/*.pyc
+*/*.pyc
+KSU_bioinfo_lab/*/*.pyc
