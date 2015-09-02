@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+from __future__ import print_function
 ##########################################################################
 #	USAGE: import general
 #   DESCRIPTION: Functions for common tasks (e.g. opening files with
@@ -9,6 +10,11 @@ import sys
 import os
 import logging as log
 import errno
+def print_no_newline(to_print):
+    '''
+        Print a statement without a new line in either python 2.7+ or python 3.3+
+        '''
+    print(to_print , end='')
 def convert_to_full(path):
     '''
         Returns absolute path from a relative path.
