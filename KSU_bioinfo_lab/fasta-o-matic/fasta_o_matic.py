@@ -46,7 +46,7 @@ def doc():
         Print standard information about script.
     '''
     log.info('###########################################################')
-    log.info('#  fasta_o_matic.py Version 1.1.0                         #')
+    log.info('#  fasta_o_matic.py Version 1.1.1                         #')
     log.info('#                                                         #')
     log.info('#  Created by Jennifer M Shelton 7/16/15                  #')
     log.info('#  github.com/i5K-KINBRE-script-share/Irys-scaffolding    #')
@@ -57,6 +57,9 @@ def doc():
 # fasta_o_matic.py Version 1.1.0
 #
 # Added an optional potentially fatal, potentially non-fatal test for header uniqueness. Now default QC steps are 'wrap new_line unique' instead of 'wrap new_line header_whitespace'.
+# fasta_o_matic.py Version 1.1.1
+#
+# Now returns final FASTA filename without a new line at the end when called from the commandline. This should make the FASTA name easier for downstream scripts to use.
 
 ##########################################################################
 ##############                   Unit Tests                  ############
@@ -597,5 +600,5 @@ def run_steps(fasta_file_name, steps, out_dir):
 ##########################################################################
 if __name__ == '__main__':
     final_fasta_file_name = main()
-    print(final_fasta_file_name)
+    sys.stdout.write(final_fasta_file_name)
 
